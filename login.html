@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LupinHack | Terminal Entry</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div id="space-bg"></div>
+
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="logo">LupinHack⚡</h1>
+            <p style="color: #555; margin-bottom: 20px;">Restricted Area: Agents Only</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter Agent Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Access Code" required>
+                </div>
+                <button type="submit" class="btn-primary">INITIALIZE ACCESS</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect: Kama user tayari yupo, mtoe hapa
+        if(localStorage.getItem('agentName')) {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            // Chukua jina kabla ya '@', mfano: shadow@gmail.com -> SHADOW
+            let agentName = email.split('@')[0].toUpperCase();
+            
+            // Save kwa Browser Memory
+            localStorage.setItem('agentName', agentName);
+            
+            // Redirect kwenda Dashboard
+            window.location.href = 'index.html';
+        });
+
+        // Space Stars Logic
+        const space = document.getElementById('space-bg');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 50 + 20) + 's';
+            space.appendChild(star);
+        }
+    </script>
+</body>
+</html>
