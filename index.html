@@ -41,38 +41,37 @@
 
         .main-container { max-width: 900px; margin: 50px auto; padding: 20px; }
 
-        /* 🔍 LUPER SEARCH CORE - FIXED STYLE */
+        /* 🔍 LUPER SEARCH CORE - INTERNAL SYSTEM */
         .search-section {
             background: rgba(0,0,0,0.8); border: 2px solid var(--accent);
             padding: 30px; margin-bottom: 40px; box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* Override Google CSE to look internal */
-        .gsc-control-cse { 
-            background-color: transparent !important; 
-            border: none !important; 
-            padding: 0 !important;
+        .search-group { display: flex; gap: 0; margin-bottom: 20px; }
+        .search-group input {
+            flex: 1; padding: 15px; background: #000; border: 1px solid var(--accent);
+            color: var(--accent); font-family: 'Orbitron'; outline: none;
         }
-        .gsc-search-button-v2 {
-            background-color: var(--accent) !important;
-            border: none !important;
+        .search-group button {
+            background: var(--accent); color: black; border: none; padding: 0 25px;
+            font-weight: 900; cursor: pointer; font-family: 'Orbitron';
         }
-        .gsc-input-box {
-            background-color: #000 !important;
-            border: 1px solid var(--accent) !important;
+
+        #luperResults {
+            text-align: left; max-height: 500px; overflow-y: auto; padding-right: 10px;
         }
-        input.gsc-input {
-            background: transparent !important;
-            color: var(--accent) !important;
-            font-family: 'Orbitron' !important;
+        .result-card {
+            background: rgba(0, 242, 255, 0.05); border-left: 3px solid var(--accent);
+            padding: 15px; margin-bottom: 15px; transition: 0.3s;
         }
-        .gsc-results-wrapper-overlay {
-            background: rgba(0, 0, 0, 0.95) !important;
+        .result-card:hover { background: rgba(0, 242, 255, 0.1); }
+        .result-card a { 
+            color: var(--accent); text-decoration: none; font-weight: bold; 
+            font-size: 15px; text-transform: none; 
         }
-        /* Hii inafanya majibu yaonekane yapo ndani ya ukurasa */
-        .gsc-results-wrapper-visible {
-            background: transparent !important;
-            color: white !important;
+        .result-card p { 
+            color: #ccc; font-size: 12px; text-transform: none; 
+            margin-top: 5px; line-height: 1.4; font-family: 'JetBrains Mono';
         }
 
         /* 🤖 AI CHAT BOX */
@@ -125,8 +124,13 @@
         
         <div class="search-section">
             <h3 style="color: var(--accent); margin-bottom: 15px;">LUPIN SEARCH CORE</h3>
-            <script async src="https://cse.google.com/cse.js?cx=a7ba9c991ec004481"></script>
-            <div class="gcse-search" data-resultsUrl="index.html" data-newWindow="false" data-queryParameterName="search"></div>
+            <div class="search-group">
+                <input type="text" id="luperSearchInput" placeholder="ENTER SEARCH COMMAND...">
+                <button onclick="executeLuperSearch()">SEARCH</button>
+            </div>
+            <div id="luperResults">
+                <p style="color: #444; font-size: 11px;">SYSTEM READY FOR QUERY...</p>
+            </div>
         </div>
 
         <div class="ai-box">
@@ -159,6 +163,39 @@
         const agent = localStorage.getItem('agentName') || "SHADOW";
         document.getElementById('displayAgent').innerText = agent;
 
+        // 🔍 NEW INTERNAL SEARCH ENGINE
+        async function executeLuperSearch() {
+            const query = document.getElementById('luperSearchInput').value;
+            const resArea = document.getElementById('luperResults');
+            if(!query) return;
+
+            resArea.innerHTML = "<p style='color: var(--accent);'>[SYSTEM] FETCHING INTEL FROM GLOBAL SERVERS...</p>";
+
+            const API_KEY = "AIzaSyDl2jrRffbN4qyY81iCNDD1zETMqn8hoFA"; 
+            const CX_ID = "a7ba9c991ec004481"; 
+
+            try {
+                const r = await fetch(`https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CX_ID}&q=${query}`);
+                const d = await r.json();
+
+                if(d.items) {
+                    let html = "";
+                    d.items.forEach(item => {
+                        html += `
+                        <div class="result-card">
+                            <a href="${item.link}" target="_self">${item.title}</a>
+                            <p>${item.snippet}</p>
+                        </div>`;
+                    });
+                    resArea.innerHTML = html;
+                } else {
+                    resArea.innerHTML = "<p style='color: red;'>NO RESULTS FOUND IN THIS SECTOR.</p>";
+                }
+            } catch(e) {
+                resArea.innerHTML = "<p style='color: red;'>CRITICAL ERROR: CONNECTION LOST.</p>";
+            }
+        }
+
         // AI Functionality
         async function askLupinAI() {
             const query = document.getElementById('ai-query').value;
@@ -168,7 +205,7 @@
             responseArea.innerText = "THINKING...";
             try {
                 const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
-                    headers: { Authorization: "Bearer hf_ZJjRzYdAbKjQxVbLnPm" }, // Hakikisha token yako ni sahihi
+                    headers: { Authorization: "Bearer hf_ZJjRzYdAbKjQxVbLnPm" },
                     method: "POST",
                     body: JSON.stringify({ inputs: query }),
                 });
@@ -190,7 +227,6 @@
             }
         }
 
-        // Space Background Animation
         window.onload = () => {
             typeWriter();
             const space = document.getElementById('space-bg');
