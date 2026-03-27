@@ -3,121 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LupinHack Dashboard | 4K Edition</title>
-    <link rel="stylesheet" href="style.css">
+    <title>LUPINHACK | THE ARCHITECT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Orbitron:wght@400;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #05070a;
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.8);
+            --hacker-green: #00ff41;
+        }
+
+        * { box-sizing: border-box; text-transform: uppercase; }
+
+        body {
+            margin: 0; font-family: 'Orbitron', sans-serif;
+            background: var(--bg-dark); color: white; overflow-x: hidden;
+        }
+
+        /* 🌌 Space Background */
+        #space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: move linear infinite; }
+        @keyframes move { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
+
+        /* HEADER FIX */
+        header {
+            padding: 25px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.95); border-bottom: 3px solid var(--accent);
+        }
+        .logo { font-size: 28px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px var(--accent); }
+        
+        /* 🔒 Agent Button (No edges) */
+        .agent-btn {
+            background: var(--accent); color: black; padding: 10px 20px;
+            font-weight: 900; border: none; cursor: pointer;
+            box-shadow: 0 0 15px var(--accent-glow); display: flex; align-items: center; gap: 10px;
+        }
+
+        .hero { padding: 100px 20px; text-align: center; }
+        .quote-box {
+            background: rgba(0,0,0,0.7); padding: 40px; border: 1px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow); display: inline-block;
+        }
+
+        .main-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* 🎬 Cinema Button (Sharp Edges) */
+        .cinema-card {
+            background: rgba(255,255,255,0.05); padding: 30px;
+            border: 2px solid var(--accent); margin-bottom: 50px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            transition: 0.3s; cursor: pointer;
+        }
+        .cinema-card:hover { box-shadow: 0 0 30px var(--accent); background: rgba(0, 242, 255, 0.1); }
+        .btn-enter {
+            background: var(--hacker-green); color: black; padding: 15px 40px;
+            font-weight: 900; border: none; font-size: 18px; box-shadow: 0 0 15px var(--hacker-green);
+        }
+
+        /* 🖋️ Bio Box (No Edges) */
+        .bio-box {
+            background: rgba(0,0,0,0.8); border: 1px solid var(--hacker-green);
+            padding: 40px; margin-top: 50px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        .bio-title { color: var(--hacker-green); margin-bottom: 20px; letter-spacing: 5px; }
+        .bio-text { 
+            font-family: 'JetBrains Mono', monospace; font-size: 16px; 
+            line-height: 1.8; color: var(--hacker-green); min-height: 150px;
+        }
+
+        footer {
+            text-align: center; padding: 60px; margin-top: 100px;
+            border-top: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .special-sig {
+            font-family: 'Dancing Script', cursive; font-size: 35px;
+            color: var(--accent); text-transform: none; text-shadow: 0 0 15px var(--accent);
+        }
+    </style>
 </head>
 <body>
     <div id="space-bg"></div>
 
     <header>
-        <div class="logo">LupinHack⚡</div>
-        <nav class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i> HOME</a>
-            <a href="movies.html"><i class="fas fa-film"></i> MOVIES</a>
-            <div class="agent-box">
-                <i class="fas fa-user-shield"></i> <span id="displayAgent">AGENT</span>
-            </div>
-            <a href="#" onclick="logout()" style="color: #ff4b2b; margin-left: 15px;"><i class="fas fa-sign-out-alt"></i> EXIT</a>
-        </nav>
+        <div class="logo">LUPINHACK⚡</div>
+        <div class="agent-btn">
+            <i class="fas fa-user-shield"></i> <span id="displayAgent">AGENT</span>
+        </div>
     </header>
-
-    <div class="status-bar">
-        ● ALL SYSTEMS OPERATIONAL | STATUS: SECURE | DEVELOPER: LUPIN 🥂
-    </div>
 
     <section class="hero">
         <div class="quote-box">
-            <p>"Boredom is just the doorway to intuition — sit through it, and the signal clears."</p>
-            <h4 style="margin-top: 15px; color: var(--accent); letter-spacing: 3px;">— LUPIN STARNLEY JIMMOH</h4>
+            <p>"BOREDOM IS JUST THE DOORWAY TO INTUITION — SIT THROUGH IT, AND THE SIGNAL CLEARS."</p>
+            <h4 style="margin-top: 15px; color: var(--accent);">— LUPIN STARNLEY JIMMOH</h4>
         </div>
     </section>
 
     <div class="main-container">
-        <div class="topic-row glow-border" onclick="window.location.href='movies.html'">
-            <div class="topic-info">
-                <div class="topic-icon" style="color: #ff00ff;">🎬</div>
-                <div>
-                    <div class="topic-title">ACCESS MOVIE DATABASE <span class="tag tag-free">LIVE</span></div>
-                    <div class="topic-meta">Search, Watch, and Download directly from the high-speed server.</div>
-                </div>
-            </div>
-            <span class="btn-join">ENTER CINEMA</span>
+        <div class="cinema-card" onclick="goToMovies()">
+            <h2 style="color: var(--accent); letter-spacing: 4px;">ACCESS MOVIE DATABASE</h2>
+            <p style="font-size: 12px; color: #888;">SEARCH • WATCH • DOWNLOAD • 4K STREAMING</p>
+            <button class="btn-enter">ENTER CINEMA</button>
         </div>
 
-        <div class="topic-row glow-border" onclick="alert('Accessing Database...')">
-            <div class="topic-info">
-                <div class="topic-icon">🛡️</div>
-                <div>
-                    <div class="topic-title">ChatGPT Plus + PRO Tricked Access – 1 Year! <span class="tag tag-free">FREEBIE</span></div>
-                    <div class="topic-meta">Tools & Scripts • Active • Just now</div>
-                </div>
-            </div>
-            <span class="btn-join">EXTRACT</span>
-        </div>
-
-        <div class="topic-row glow-border" onclick="alert('Opening Tutorial...')">
-            <div class="topic-info">
-                <div class="topic-icon">🔥</div>
-                <div>
-                    <div class="topic-title">Zero-Day Exploits: A Guide for New Agents</div>
-                    <div class="topic-meta">Learning • Tech-insights • 2h ago</div>
-                </div>
-            </div>
-            <span class="btn-join">READ DATA</span>
-        </div>
-
-        <div class="bio-container">
+        <div class="bio-box">
             <h2 class="bio-title">DEVELOPER INTEL REPORT</h2>
             <div id="typewriter" class="bio-text"></div>
         </div>
     </div>
 
-    <footer class="footer-4k">
-        <p>Made with <span style="color: #00ff41;">💚</span> in Tanzania</p>
-        <p class="copyright">© 2026 <span class="special-signature">Lupin Starnley Jimmoh</span></p>
+    <footer>
+        <p>MADE WITH <span style="color: var(--hacker-green);">💚</span> IN TANZANIA</p>
+        <p style="margin-top: 20px; font-size: 14px; color: #444;">© 2026 <span class="special-sig">Lupin Starnley Jimmoh</span></p>
     </footer>
 
     <script>
-        // Check if logged in
-        const agent = localStorage.getItem('agentName');
-        if(!agent) {
-            window.location.href = 'login.html';
-        } else {
-            document.getElementById('displayAgent').innerText = agent;
+        // Check Login
+        const agent = localStorage.getItem('agentName') || "SHADOW";
+        document.getElementById('displayAgent').innerText = agent;
+
+        // Redirect Fix: Hii itapeleka user kwenye ukurasa wa movies
+        function goToMovies() {
+            window.location.href = 'movies.html';
         }
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
-
-        // --- TYPEWRITER EFFECT LOGIC ---
-        const bioText = "Initializing developer profile... Name: Lupin. Origin: Kibaha, Tanzania. Occupation: IT Mastermind & Ethical Explorer. Lupin is not just a developer; he is a digital architect crafting the future of the Tanzanian web. With a deep passion for 3rd person open-world games and high-end tech, he built LupinHack to be the ultimate hub for those who dare to learn. The mission is simple: Together WE Learn. Stay focused, stay encrypted, and welcome to the inner circle of the Lupin network. The signal is clear, the path is yours...";
+        // --- TYPEWRITER BIO ---
+        const bioText = "INITIALIZING DEVELOPER PROFILE... NAME: LUPIN. ORIGIN: KIBAHA, TANZANIA. OCCUPATION: IT MASTERMIND & ETHICAL EXPLORER. LUPIN IS NOT JUST A DEVELOPER; HE IS A DIGITAL ARCHITECT CRAFTING THE FUTURE OF THE TANZANIAN WEB. WITH A PASSION FOR OPEN-WORLD GAMING AND HIGH-END TECH, HE BUILT LUPINHACK AS THE ULTIMATE HUB. THE MISSION IS SIMPLE: TOGETHER WE LEARN. STAY ENCRYPTED, AGENT.";
         
-        let index = 0;
-        function typeEffect() {
-            if (index < bioText.length) {
-                document.getElementById("typewriter").innerHTML += bioText.charAt(index);
-                index++;
-                setTimeout(typeEffect, 50); // Speed of typing
+        let i = 0;
+        function typeWriter() {
+            if (i < bioText.length) {
+                document.getElementById("typewriter").innerHTML += bioText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 40);
             }
         }
-        window.onload = typeEffect;
 
-        // Stars Background
-        const space = document.getElementById('space-bg');
-        for (let i = 0; i < 200; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 2 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDuration = (Math.random() * 60 + 20) + 's';
-            space.appendChild(star);
-        }
+        // Start everything
+        window.onload = () => {
+            typeWriter();
+            // Background Stars
+            const space = document.getElementById('space-bg');
+            for (let s = 0; s < 150; s++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDuration = (Math.random() * 50 + 20) + 's';
+                space.appendChild(star);
+            }
+        };
     </script>
 </body>
 </html>
