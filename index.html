@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN UNIVERSE | PREMIUM DASHBOARD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script async src="https://cse.google.com/cse.js?cx=77f41ad7e52cc4227"></script>
+
+    <style>
+        /* ================= KANUNI ZA RANGI NA UI ================= */
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f0;
+            --text-muted: #a0a5b5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+        /* ================= BACKGROUND YA ANGA ================= */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); overflow: hidden; }
+        .star { position: absolute; background: white; border-radius: 50%; box-shadow: 0 0 10px rgba(255,255,255,0.8); animation: twinkle linear infinite; }
+        @keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.2; transform: scale(0.8); } }
+
+        .comet {
+            position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6);
+            animation: shootingStar 6s infinite linear; opacity: 0; z-index: -1;
+        }
+        .comet::before {
+            content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 150px; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,1), transparent);
+        }
+        @keyframes shootingStar {
+            0% { transform: translate(120vw, -20vh) rotate(-45deg); opacity: 1; }
+            20% { transform: translate(-20vw, 120vh) rotate(-45deg); opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* ================= LOGIN MODAL OVERLAY ================= */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 16, 0.95); backdrop-filter: blur(15px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .login-box {
+            background: var(--glass-bg); border: 1px solid var(--primary);
+            border-radius: 20px; padding: 40px; width: 90%; max-width: 400px;
+            text-align: center; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+        }
+        .login-box h2 { color: var(--primary); font-family: 'Outfit', sans-serif; margin-bottom: 20px; }
+        .login-input {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+            color: white; padding: 12px 15px; margin-bottom: 15px; border-radius: 10px; outline: none;
+        }
+        .login-input:focus { border-color: var(--secondary); box-shadow: 0 0 10px rgba(176, 38, 255, 0.3); }
+        .login-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none;
+            color: white; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        .login-btn:hover { box-shadow: 0 0 20px var(--primary); transform: scale(1.05); }
+
+        /* ================= HEADER & NAVIGATION ================= */
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { 
+            font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+
+        .music-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--primary); width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 16px;
+            cursor: pointer; transition: 0.4s;
+        }
+        .music-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
+
+        .user-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--secondary); padding: 8px 20px; 
+            border-radius: 20px; font-family: 'Outfit', sans-serif; font-weight: 700; color: white;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(176, 38, 255, 0.2);
+        }
+
+        /* ================= MAIN CONTAINER ================= */
+        .main-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px; }
+
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 25px;
+            padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .section-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 20px; color: white; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--primary); }
+
+        /* ================= QUICK LINKS BUTTONS ================= */
+        .grid-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .menu-btn {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            color: white; padding: 15px; border-radius: 15px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 14px; transition: 0.3s;
+        }
+        .menu-btn i { font-size: 24px; color: var(--primary); }
+        .menu-btn:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.1); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,229,255,0.2); }
+        
+        .whatsapp-btn { border-color: #25D366; } .whatsapp-btn i { color: #25D366; } .whatsapp-btn:hover { background: rgba(37, 211, 102, 0.1); border-color: #25D366; box-shadow: 0 5px 15px rgba(37,211,102,0.3); }
+        .logout-btn { border-color: #ff4b2b; } .logout-btn i { color: #ff4b2b; } .logout-btn:hover { background: rgba(255, 75, 43, 0.1); border-color: #ff4b2b; box-shadow: 0 5px 15px rgba(255,75,43,0.3); }
+
+        /* ================= 🤖 AI ASSISTANT ================= */
+        .ai-response-area {
+            background: rgba(0,0,0,0.4); border-radius: 15px; padding: 20px; min-height: 80px;
+            margin-bottom: 15px; color: var(--text-main); font-size: 14px; line-height: 1.6;
+            border: 1px solid rgba(176, 38, 255, 0.2);
+        }
+        .ai-input-wrapper { display: flex; gap: 10px; }
+        .ai-input-wrapper input {
+            flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(176, 38, 255, 0.3);
+            border-radius: 20px; padding: 12px 20px; color: white; outline: none;
+        }
+        .ai-input-wrapper button {
+            background: var(--secondary); color: white; border: none; width: 45px; height: 45px;
+            border-radius: 50%; cursor: pointer; transition: 0.3s;
+        }
+
+        /* ================= DEVELOPER BIO ================= */
+        .bio-text { color: var(--text-muted); font-size: 15px; line-height: 1.8; text-align: justify; }
+
+        /* Google Custom Search Tweaks */
+        .gsc-control-cse { background: transparent !important; border: none !important; padding: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg">
+        <div class="comet" style="top: 10%; animation-delay: 0s;"></div>
+        <div class="comet" style="top: 40%; animation-delay: 3s;"></div>
+    </div>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>SYSTEM LOGIN</h2>
+            <input type="email" id="logEmail" class="login-input" placeholder="Enter Email" required>
+            <input type="text" id="logUser" class="login-input" placeholder="Create Username" required>
+            <input type="password" id="logPass" class="login-input" placeholder="Password" required>
+            <input type="password" id="logConfirm" class="login-input" placeholder="Confirm Password" required>
+            <button class="login-btn" onclick="verifyLogin()">ENTER SYSTEM</button>
+            <p id="logError" style="color: #ff4b2b; font-size: 13px; margin-top: 10px; display: none;">Passwords do not match!</p>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <div class="logo">LUPIN UNIVERSE</div>
+        <div class="header-controls">
+            <button class="music-btn" onclick="toggleMusic()" id="musicToggleBtn"><i class="fas fa-play"></i></button>
+            <div class="user-badge"><i class="fas fa-user-shield"></i> <span id="displayAgent">GUEST</span></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <div class="glass-card">
+            <h3 class="section-title"><i class="fas fa-th-large"></i> SYSTEM MODULES</h3>
+            <div class="grid-menu">
+                <button class="menu-btn" onclick="window.location.href='movies.html'"><i class="fas fa-film"></i> Movies</button>
+                <button class="menu-btn" onclick="window.location.href='hack.html'"><i class="fas fa-skull-crossbones"></i> Hacking</button>
+                <button class="menu-btn" onclick="window.location.href='games.html'"><i class="fas fa-gamepad"></i> Games</button>
+                <button class="menu-btn" onclick="window.location.href='advise.html'"><i class="fas fa-lightbulb"></i> Advise</button>
+                <button class="menu-btn" onclick="window.location.href='money.html'"><i class="fas fa-dollar-sign"></i> Make Money</button>
+                <button class="menu-btn" onclick="window.location.href='help.html'"><i class="fas fa-question-circle"></i> Help</button>
+                <button class="menu-btn" onclick="window.location.href='chat.html'"><i class="fas fa-comments"></i> Chat</button>
+                <button class="menu-btn whatsapp-btn" onclick="window.open('https://wa.me/2557827585', '_blank')"><i class="fab fa-whatsapp"></i> Dev Contact</button>
+                <button class="menu-btn logout-btn" onclick="logoutSystem()"><i class="fas fa-power-off"></i> Logout</button>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3 class="section-title"><i class="fas fa-globe"></i> GLOBAL SEARCH ENGINE</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;">Powered by Google Custom Search</p>
+            <div class="gcse-search"></div> </div>
+
+        <div class="glass-card">
+            <h3 class="section-title"><i class="fas fa-brain"></i> LUPIN NEURAL AI</h3>
+            <div class="ai-response-area" id="ai-response">
+                Greetings. I am your local neural AI assistant. Type "/ai hello" to begin.
+            </div>
+            <div class="ai-input-wrapper">
+                <input type="text" id="ai-query" placeholder="Type a command (e.g. /ai hello)...">
+                <button onclick="askNeuralAI()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3 class="section-title"><i class="fas fa-user-astronaut"></i> THE ARCHITECT</h3>
+            <div class="bio-text" id="typewriter-bio"></div>
+        </div>
+
+    </div>
+
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid var(--glass-border); margin-top: 20px;">
+        <p>Crafted with <span style="color: #ff2a5f;">♥</span> in Tanzania</p>
+        <p style="margin-top: 10px;">© <span style="color: var(--primary); font-weight: bold;">2026</span></p>
+        <span style="font-family: 'Dancing Script', cursive; font-size: 35px; color: var(--secondary);">Lupin Starnley Jimmoh</span>
+    </footer>
+
+    <script>
+        // ================= STAR GENERATOR =================
+        function generateStars() {
+            const space = document.getElementById('universe-bg');
+            for (let i = 0; i < 100; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                let size = Math.random() * 2;
+                star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                space.appendChild(star);
+            }
+        }
+        generateStars();
+
+        // ================= LOGIN & USERNAME SYSTEM =================
+        const overlay = document.getElementById('login-overlay');
+        const userDisplay = document.getElementById('displayAgent');
+        let currentUser = localStorage.getItem('systemUser');
+
+        if(currentUser) {
+            overlay.style.display = 'none';
+            userDisplay.innerText = currentUser.toUpperCase();
+        }
+
+        function verifyLogin() {
+            const email = document.getElementById('logEmail').value;
+            const user = document.getElementById('logUser').value;
+            const pass = document.getElementById('logPass').value;
+            const confirm = document.getElementById('logConfirm').value;
+            const err = document.getElementById('logError');
+
+            if(!email || !user || !pass || !confirm) {
+                err.innerText = "Please fill all fields!";
+                err.style.display = "block";
+                return;
+            }
+
+            if(pass !== confirm) {
+                err.innerText = "Passwords do not match!";
+                err.style.display = "block";
+            } else {
+                localStorage.setItem('systemUser', user);
+                userDisplay.innerText = user.toUpperCase();
+                overlay.style.display = 'none';
+                
+                // Anza kuandika bio baada ya ku-login
+                document.getElementById('typewriter-bio').innerHTML = "";
+                i = 0; 
+                typeWriterBio();
+            }
+        }
+
+        function logoutSystem() {
+            localStorage.removeItem('systemUser');
+            window.location.href = "https://www.google.com";
+        }
+
+        // ================= MUSIC PLAYER =================
+        const music = document.getElementById("bg-music");
+        const musicBtn = document.getElementById("musicToggleBtn");
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+                musicBtn.style.color = "var(--primary)";
+            } else {
+                music.play().catch(e => console.log("Browser autoplay restriction."));
+                musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                musicBtn.style.color = "#00ff41";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // ================= SIMULATED AI (SAFE FROM GITHUB BANS) =================
+        function askNeuralAI() {
+            const query = document.getElementById('ai-query').value.trim();
+            const responseArea = document.getElementById('ai-response');
+            if(!query) return;
+
+            responseArea.innerHTML = "<i class='fas fa-circle-notch fa-spin' style='color: var(--secondary);'></i> Analyzing input...";
+            document.getElementById('ai-query').value = ""; // Clear input
+
+            setTimeout(() => {
+                let lowerQ = query.toLowerCase();
+                let answer = "";
+                let uname = localStorage.getItem('systemUser') || "Guest";
+
+                if (lowerQ === "/ai hello" || lowerQ === "hello") {
+                    answer = "Hello, " + uname.toUpperCase() + ". I am Lupin AI. How can I assist you in the digital realm today?";
+                } else if (lowerQ.includes("who are you")) {
+                    answer = "I am a Neural AI integrated into the Lupin Universe, created by the Architect, Lupin Starnley Jimmoh.";
+                } else if (lowerQ.includes("hack")) {
+                    answer = "Accessing hacking protocols... Navigate to the HACKING module from the main menu.";
+                } else if (lowerQ.includes("time") || lowerQ.includes("date")) {
+                    answer = "The current system time is: " + new Date().toLocaleString();
+                } else {
+                    answer = "Command received: [" + query + "]. I am currently operating in offline simulation mode. Please use predefined commands like '/ai hello'.";
+                }
+
+                responseArea.innerText = answer;
+            }, 1000);
+        }
+
+        document.getElementById("ai-query").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") askNeuralAI();
+        });
+
+        // ================= TYPEWRITER EFFECT (DEVELOPER BIO) =================
+        const fullBio = "Welcome to the digital frontier. I am Lupin Starnley Jimmoh, the Architect behind this hub. Hailing from Kibaha, Tanzania, I specialize in Information Technology, system exploration, and digital innovation. This ecosystem is designed to seamlessly merge utility, entertainment, and advanced computing. Enjoy the journey through the Lupin Universe.";
+        let i = 0;
+        
+        function typeWriterBio() {
+            if (i < fullBio.length) {
+                document.getElementById('typewriter-bio').innerHTML += fullBio.charAt(i);
+                i++;
+                setTimeout(typeWriterBio, 30);
+            }
+        }
+        // Kama user tayari yupo logged in, anza ku-type bio
+        if(currentUser) setTimeout(typeWriterBio, 1000);
+
+    </script>
+</body>
+</html>
