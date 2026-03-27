@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN MESSENGER | NEURAL LINK</title>
+    <script src="https://unpkg.com/@cometchat/chat-sdk-javascript@latest/CometChat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff; /* Cyan */
+            --secondary: #b026ff; /* Purple */
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        
+        body { 
+            background: var(--bg-deep); 
+            color: white; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* 🌌 Space Background */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* Header */
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+
+        .app-container { display: flex; flex: 1; width: 100%; max-width: 1400px; margin: 0 auto; overflow: hidden; }
+
+        /* Sidebar - Groups */
+        .sidebar {
+            width: 350px; background: rgba(0,0,0,0.4); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; backdrop-filter: blur(15px);
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+        .btn-create { 
+            width: 100%; padding: 12px; border-radius: 20px; border: none; 
+            background: linear-gradient(45deg, var(--secondary), #8a2be2); color: white;
+            font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Outfit', sans-serif;
+        }
+        .btn-create:hover { transform: scale(1.02); box-shadow: 0 0 15px var(--secondary); }
+
+        .group-list { flex: 1; overflow-y: auto; padding: 15px; }
+        .group-item {
+            padding: 15px; border-radius: 20px; margin-bottom: 12px; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 15px; background: var(--glass);
+            border: 1px solid transparent;
+        }
+        .group-item:hover { background: rgba(0, 229, 255, 0.05); border-color: var(--primary); }
+        .group-item.active { background: rgba(176, 38, 255, 0.1); border-color: var(--secondary); }
+
+        /* Chat Window */
+        .chat-window { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.1); position: relative; }
+        .chat-header { 
+            padding: 15px 25px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; gap: 15px; backdrop-filter: blur(10px);
+        }
+        
+        #messages-view { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        
+        /* Message Bubbles (WhatsApp Style) */
+        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-size: 14px; position: relative; word-wrap: break-word; }
+        .msg.sent { align-self: flex-end; background: var(--secondary); border-radius: 20px 20px 2px 20px; box-shadow: 0 4px 15px rgba(176, 38, 255, 0.2); }
+        .msg.received { align-self: flex-start; background: var(--glass-strong); border: 1px solid var(--border); border-radius: 20px 20px 20px 2px; }
+        .sender-name { font-size: 10px; font-weight: 900; color: var(--primary); margin-bottom: 4px; display: block; text-transform: uppercase; }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px; background: rgba(0,0,0,0.5); display: flex; align-items: center; gap: 15px;
+            border-top: 1px solid var(--border); backdrop-filter: blur(20px);
+        }
+        .msg-input {
+            flex: 1; background: var(--glass); border: 1px solid var(--border);
+            padding: 12px 25px; border-radius: 30px; color: white; outline: none; transition: 0.3s;
+        }
+        .msg-input:focus { border-color: var(--primary); }
+        
+        .action-btn {
+            width: 48px; height: 48px; border-radius: 50%; border: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; font-size: 18px;
+        }
+        .btn-attach { background: transparent; color: var(--primary); }
+        .btn-send { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+        .btn-send:hover { transform: rotate(-10deg) scale(1.1); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <header>
+        <div class="logo">LUPIN CHAT</div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="text-align: right;">
+                <div id="connection-status" style="font-size: 9px; color: #00ff41;">• ENCRYPTION ACTIVE</div>
+                <div style="font-family: 'Outfit', sans-serif; font-weight: 900; color: var(--primary);" id="displayUser">USER</div>
+            </div>
+            <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-user-astronaut" style="color: black;"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <button class="btn-create" onclick="createNewGroup()"><i class="fas fa-plus"></i> CREATE NEW GROUP</button>
+            </div>
+            <div class="group-list" id="group-list">
+                <p style="text-align: center; color: var(--text-muted); margin-top: 20px; font-size: 12px;">Syncing Channels...</p>
+            </div>
+        </div>
+
+        <div class="chat-window">
+            <div class="chat-header">
+                <div id="active-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-hashtag"></i>
+                </div>
+                <div>
+                    <h4 id="active-group-name">Select a Channel</h4>
+                    <span style="font-size: 10px; color: var(--primary); opacity: 0.8;">End-to-End Neural Encryption</span>
+                </div>
+            </div>
+
+            <div id="messages-view">
+                <div style="text-align: center; margin-top: 150px; opacity: 0.3;">
+                    <i class="fas fa-comments" style="font-size: 50px;"></i>
+                    <p style="margin-top: 10px;">Select a group to start messaging</p>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <button class="action-btn btn-attach" onclick="document.getElementById('file-up').click()">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="file" id="file-up" style="display:none" onchange="uploadFile(this)">
+                
+                <input type="text" id="chat-input" class="msg-input" placeholder="Neural message transmission...">
+                
+                <button class="action-btn btn-send" onclick="sendTextMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIGURATION =================
+        const APP_ID = "1676951d3d4c86874";
+        const REGION = "us";
+        const AUTH_KEY = "a5190f68138ec4ce35cbb195663f4a804f015f0d";
+        
+        const myID = localStorage.getItem('systemUser') || "Lupin_Ghost";
+        document.getElementById('displayUser').innerText = myID.toUpperCase();
+
+        let currentGUID = "";
+
+        // 1. Initialize CometChat
+        const appSetting = new CometChat.AppSettingsBuilder()
+            .subscribePresenceForAllUsers()
+            .setRegion(REGION)
+            .build();
+
+        CometChat.init(APP_ID, appSetting).then(() => {
+            console.log("CometChat Ready");
+            authSystem();
+        }, error => {
+            console.log("Init failed", error);
+        });
+
+        // 2. Auth Logic
+        function authSystem() {
+            CometChat.getLoggedinUser().then(user => {
+                if (!user) {
+                    CometChat.login(myID, AUTH_KEY).then(user => {
+                        startApp();
+                    }, error => {
+                        // Create user if not exists
+                        let newUser = new CometChat.User(myID);
+                        newUser.setName(myID);
+                        CometChat.createUser(newUser, AUTH_KEY).then(u => authSystem());
+                    });
+                } else {
+                    startApp();
+                }
+            });
+        }
+
+        function startApp() {
+            fetchGroups();
+            setupListeners();
+        }
+
+        // 3. Group Management
+        function fetchGroups() {
+            let groupsRequest = new CometChat.GroupsRequestBuilder().setLimit(30).build();
+            groupsRequest.fetchNext().then(groupList => {
+                const list = document.getElementById('group-list');
+                list.innerHTML = "";
+                groupList.forEach(group => {
+                    list.innerHTML += `
+                        <div class="group-item" onclick="openChat('${group.guid}', '${group.name}')" id="g-${group.guid}">
+                            <div style="background:var(--secondary); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;">
+                                ${group.name.charAt(0)}
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-weight:700; font-size:14px;">${group.name}</div>
+                                <div style="font-size:10px; color:var(--primary)">${group.membersCount} Online</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function createNewGroup() {
+            const name = prompt("Enter Group Name:");
+            if(!name) return;
+            const guid = "lupin_" + Date.now();
+            let group = new CometChat.Group(guid, name, CometChat.GROUP_TYPE.PUBLIC, "");
+            CometChat.createGroup(group).then(g => {
+                fetchGroups();
+                openChat(g.guid, g.name);
+            });
+        }
+
+        // 4. Chatting Logic
+        function openChat(guid, name) {
+            currentGUID = guid;
+            document.getElementById('active-group-name').innerText = name;
+            
+            // Mark active
+            document.querySelectorAll('.group-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('g-' + guid)?.classList.add('active');
+
+            CometChat.joinGroup(guid, CometChat.GROUP_TYPE.PUBLIC).then(() => {
+                loadHistory(guid);
+            }, error => { loadHistory(guid); });
+        }
+
+        function loadHistory(guid) {
+            let messagesRequest = new CometChat.MessagesRequestBuilder().setGUID(guid).setLimit(50).build();
+            messagesRequest.fetchPrevious().then(messages => {
+                const view = document.getElementById('messages-view');
+                view.innerHTML = "";
+                messages.forEach(renderMsg);
+                view.scrollTop = view.scrollHeight;
+            });
+        }
+
+        function renderMsg(msg) {
+            if (msg.category !== "message") return;
+            const view = document.getElementById('messages-view');
+            const isMe = msg.sender.uid === myID;
+            
+            let content = msg.text || "";
+            if(msg.type === "image") content = `<img src="${msg.data.url}" style="max-width:250px; border-radius:15px; border:1px solid var(--primary);">`;
+            if(msg.type === "file") content = `<a href="${msg.data.url}" target="_blank" style="color:var(--primary); text-decoration:none;"><i class="fas fa-file"></i> Open Attached File</a>`;
+
+            view.innerHTML += `
+                <div class="msg ${isMe ? 'sent' : 'received'}">
+                    <span class="sender-name">${msg.sender.name}</span>
+                    <div>${content}</div>
+                </div>
+            `;
+            view.scrollTop = view.scrollHeight;
+        }
+
+        function sendTextMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text || !currentGUID) return;
+
+            let textMessage = new CometChat.TextMessage(currentGUID, text, CometChat.RECEIVER_TYPE.GROUP);
+            CometChat.sendMessage(textMessage).then(msg => {
+                renderMsg(msg);
+                input.value = "";
+            });
+        }
+
+        function uploadFile(input) {
+            if(!input.files[0] || !currentGUID) return;
+            let mediaMessage = new CometChat.MediaMessage(currentGUID, input.files[0], CometChat.MESSAGE_TYPE.FILE, CometChat.RECEIVER_TYPE.GROUP);
+            CometChat.sendMediaMessage(mediaMessage).then(msg => {
+                renderMsg(msg);
+            });
+        }
+
+        // 5. Real-time Listening
+        function setupListeners() {
+            CometChat.addMessageListener("LUPIN_HUB", new CometChat.MessageListener({
+                onTextMessageReceived: msg => { if(msg.receiverId === currentGUID) renderMsg(msg); },
+                onMediaMessageReceived: msg => { if(msg.receiverId === currentGUID) renderMsg(msg); }
+            }));
+        }
+
+        // Enter key to send
+        document.getElementById('chat-input').addEventListener("keypress", (e) => {
+            if(e.key === "Enter") sendTextMessage();
+        });
+
+        // Background Stars
+        const space = document.getElementById('universe-bg');
+        for(let i=0; i<100; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 2 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            space.appendChild(star);
+        }
+    </script>
+</body>
+</html>
