@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN ADVISE | NEURAL HEART</title>
+    <script src="https://unpkg.com/@cometchat/chat-sdk-javascript@latest/CometChat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --gold: #ffd700;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-deep); color: white; min-height: 100vh; overflow-x: hidden; }
+
+        /* 🌌 Space Background */
+        #stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; }
+
+        /* Audio Overlay */
+        #audio-gate {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+        .play-btn { 
+            padding: 20px 40px; background: var(--secondary); border: none; border-radius: 50px;
+            color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer; box-shadow: 0 0 30px var(--secondary);
+        }
+
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--primary); }
+
+        .content-wrapper { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        /* 🏆 Developer Special Advice */
+        .dev-card {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.1), rgba(0, 229, 255, 0.1));
+            border: 2px solid var(--gold); border-radius: 30px; padding: 40px; margin-bottom: 50px;
+            position: relative; box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+        }
+        .dev-badge { position: absolute; top: -15px; left: 30px; background: var(--gold); color: black; padding: 5px 20px; border-radius: 20px; font-weight: 900; font-size: 12px; }
+        
+        .main-text { font-size: 1.1rem; line-height: 1.8; margin-bottom: 25px; }
+        .highlight { color: var(--primary); font-weight: 700; }
+        .shoutout { border-left: 3px solid var(--secondary); padding-left: 20px; margin: 20px 0; }
+        .mentor { display: block; font-family: 'Outfit', sans-serif; font-weight: 900; color: var(--gold); font-size: 1.2rem; }
+
+        /* 📜 Real-time Advice Feed */
+        .feed-section { margin-top: 60px; }
+        .feed-title { font-family: 'Outfit', sans-serif; font-size: 24px; margin-bottom: 20px; color: var(--secondary); }
+        #advice-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 100px; }
+        
+        .user-advice {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px;
+            animation: slideIn 0.5s ease; backdrop-filter: blur(10px);
+        }
+        .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; color: var(--gold); font-weight: 900; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ✍️ Input Area */
+        .input-box {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 800px; background: rgba(5, 5, 16, 0.95);
+            border: 2px solid var(--secondary); border-radius: 50px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px; backdrop-filter: blur(20px);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+        }
+        .input-box input { flex: 1; background: transparent; border: none; color: white; padding: 10px; outline: none; font-size: 15px; }
+        .plus-btn { background: var(--secondary); border: none; width: 45px; height: 45px; border-radius: 50%; color: white; cursor: pointer; transition: 0.3s; }
+        .send-btn { background: var(--primary); border: none; width: 45px; height: 45px; border-radius: 50%; color: black; cursor: pointer; transition: 0.3s; }
+        .plus-btn:hover, .send-btn:hover { transform: scale(1.1); }
+
+        .exit-btn { background: transparent; border: 1px solid var(--primary); padding: 5px 15px; border-radius: 20px; color: var(--primary); text-decoration: none; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div id="audio-gate">
+        <h2 style="margin-bottom: 20px; font-family: 'Outfit';">Ready for some Hope?</h2>
+        <button class="play-btn" onclick="startEverything()">ENTER & HEAR HOPE</button>
+    </div>
+
+    <div id="stars-bg"></div>
+
+    <header>
+        <div class="logo">LUPIN ADVISE</div>
+        <a href="index.html" class="exit-btn"><i class="fas fa-sign-out-alt"></i> EXIT HUB</a>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="dev-card">
+            <div class="dev-badge"><i class="fas fa-code"></i> FOUNDER'S VOICE</div>
+            <div class="main-text">
+                Mimi hapa ni <span class="highlight">Lupin Starnley Jimmoh</span>, nikiwa nimejaa furaha na matumaini. 
+                Wewe unayetumia website hii, rafiki yangu <span class="highlight user-name-span">@user</span>, ningependa kukuambia "Hi" kwanza, na asante kwa kuwa sehemu ya safari hii. 
+                <br><br>
+                Nimetengeneza website hii kama majaribio, lakini ndoto yangu ni kubwa—natarajia kuwa mtu mkubwa sana baadae kwenye ulimwengu wa <strong>IT na Ethical Hacking</strong>. 
+                <br><br>
+                Labda nikwambie mwenzangu <span class="highlight user-name-span">@user</span>, kama una kipaji fulani moyoni mwako, fanya juu chini ukikuze. <strong>Usione aibu</strong>, jifunze, tafuta kila njia hata kama hakuna anayekusupport kwa sasa. Kumbuka, wapo watu wanaopenda mafanikio yako, na wapo wasiopenda—wewe angalia mbele tu.
+            </div>
+
+            <div class="shoutout">
+                <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px;">Napenda kuwashukuru sana hawa Big Brothers walionipa moyo mpaka nikafika hapa:</p>
+                <span class="mentor">💎 Ian Praygod Swai a.k.a Iceboe</span>
+                <span class="mentor">💎 Octavian Elly Mutabazi a.k.a WYN</span>
+                <span class="mentor">💎 Ryan Philip Urio a.k.a King Mercedez</span>
+                <span class="mentor">💎 Baraka Francis Msangi a.k.a Creed</span>
+            </div>
+
+            <p class="main-text" style="font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: var(--primary);">
+                One day nikifanikiwa, sitakusahau kamwe <span class="user-name-span">@user</span>. Tutatunza kumbukumbu hii daima. Tumia talanta yako, fikisha malengo!
+            </p>
+        </div>
+
+        <div class="feed-section">
+            <div class="feed-title"><i class="fas fa-broadcast-tower"></i> LIVE COMMUNITY ADVISE</div>
+            <div id="advice-list">
+                </div>
+        </div>
+    </div>
+
+    <div class="input-box">
+        <button class="plus-btn"><i class="fas fa-plus"></i></button>
+        <input type="text" id="advice-input" placeholder="Andika neno la hekima hapa (Tumia @user kumtaja msomaji)...">
+        <button class="send-btn" onclick="publishAdvice()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <audio id="hope-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // ================= CONFIGURATION =================
+        const APP_ID = "1676951d3d4c86874";
+        const REGION = "us";
+        const AUTH_KEY = "a5190f68138ec4ce35cbb195663f4a804f015f0d";
+        const BOARD_GUID = "advise_global_board";
+
+        const myName = localStorage.getItem('systemUser') || "Secret_Guest";
+        
+        // Update all @user mentions on the page
+        function updateUIMentions() {
+            document.querySelectorAll('.user-name-span').forEach(el => {
+                el.innerText = myName.toUpperCase();
+            });
+        }
+
+        // 1. Audio and Init
+        function startEverything() {
+            document.getElementById('audio-gate').style.display = 'none';
+            document.getElementById('hope-music').play();
+            initCometChat();
+            updateUIMentions();
+        }
+
+        // 2. CometChat Logic
+        function initCometChat() {
+            const appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+            CometChat.init(APP_ID, appSetting).then(() => {
+                loginToChat();
+            });
+        }
+
+        function loginToChat() {
+            CometChat.getLoggedinUser().then(user => {
+                if (!user) {
+                    CometChat.login(myName, AUTH_KEY).then(() => {
+                        fetchAdvice();
+                        listenForAdvice();
+                    });
+                } else {
+                    fetchAdvice();
+                    listenForAdvice();
+                }
+            });
+        }
+
+        function publishAdvice() {
+            const input = document.getElementById('advice-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            let textMessage = new CometChat.TextMessage(BOARD_GUID, text, CometChat.RECEIVER_TYPE.GROUP);
+            CometChat.sendMessage(textMessage).then(msg => {
+                renderAdvice(msg);
+                input.value = "";
+                alert("Published! Maneno yako sasa yako hewani.");
+            });
+        }
+
+        function fetchAdvice() {
+            let messagesRequest = new CometChat.MessagesRequestBuilder().setGUID(BOARD_GUID).setLimit(30).build();
+            messagesRequest.fetchPrevious().then(messages => {
+                messages.forEach(renderAdvice);
+            });
+        }
+
+        function listenForAdvice() {
+            CometChat.addMessageListener("ADVISE_LISTENER", new CometChat.MessageListener({
+                onTextMessageReceived: msg => {
+                    if(msg.receiverId === BOARD_GUID) renderAdvice(msg);
+                }
+            }));
+        }
+
+        function renderAdvice(msg) {
+            if(!msg.text) return;
+            const list = document.getElementById('advice-list');
+            
+            // Handle @user mention dynamically for the current viewer
+            let formattedText = msg.text.replace(/@user/gi, `<span style="color:var(--primary); font-weight:bold;">${myName.toUpperCase()}</span>`);
+            
+            const div = document.createElement('div');
+            div.className = 'user-advice';
+            div.innerHTML = `
+                <div class="user-info">
+                    <i class="fas fa-crown"></i> ${msg.sender.name.toUpperCase()} (ADVISOR)
+                </div>
+                <div style="font-size: 14px; line-height: 1.6;">${formattedText}</div>
+            `;
+            list.prepend(div);
+        }
+
+        // Stars Background
+        const bg = document.getElementById('stars-bg');
+        for(let i=0; i<100; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 2 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            bg.appendChild(star);
+        }
+    </script>
+</body>
+</html>
