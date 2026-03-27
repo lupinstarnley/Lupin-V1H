@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMUX TERMINAL | NEURAL INTERFACE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 229, 255, 0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background: var(--bg-deep); 
+            color: #e0e0e0; 
+            font-family: 'Fira Code', monospace; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column;
+        }
+
+        /* 🌌 Space Background */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+        .back-btn { color: white; text-decoration: none; font-size: 13px; padding: 6px 15px; border-radius: 20px; background: var(--secondary); font-weight: bold; }
+
+        /* Terminal Window */
+        .terminal-box {
+            flex: 1; margin: 20px; background: rgba(0,0,0,0.6); 
+            border: 1px solid var(--border); border-radius: 15px;
+            display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .term-header {
+            padding: 12px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .term-title { font-size: 12px; color: var(--secondary); font-weight: bold; }
+
+        #output {
+            flex: 1; padding: 25px; overflow-y: auto; font-size: 14px; line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .input-line {
+            padding: 15px 25px; display: flex; align-items: center; gap: 10px;
+            background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);
+        }
+        .prompt { color: var(--primary); font-weight: bold; }
+        input { 
+            background: transparent; border: none; color: white; flex: 1; 
+            outline: none; font-family: 'Fira Code', monospace; font-size: 14px;
+        }
+
+        /* Styling for Fake Logs */
+        .log-cyan { color: var(--primary); }
+        .log-purple { color: var(--secondary); }
+        .log-green { color: #00ff41; font-weight: bold; }
+        .log-red { color: #ff3e3e; font-weight: bold; }
+        .cmd-list { color: #ffd700; font-size: 13px; border: 1px dashed #ffd700; padding: 10px; margin: 10px 0; border-radius: 10px; }
+
+        .btn-link {
+            display: inline-block; margin-top: 10px; padding: 8px 15px; 
+            background: var(--primary); color: black; border-radius: 5px; 
+            text-decoration: none; font-weight: bold; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <header>
+        <div class="logo">LUMUX TERMINAL v1.0</div>
+        <a href="index.html" class="back-btn"><i class="fas fa-power-off"></i> EXIT</a>
+    </header>
+
+    <div class="terminal-box">
+        <div class="term-header">
+            <div style="display:flex; gap:6px;">
+                <div style="width:10px; height:10px; border-radius:50%; background:#ff5f56;"></div>
+                <div style="width:10px; height:10px; border-radius:50%; background:#ffbd2e;"></div>
+                <div style="width:10px; height:10px; border-radius:50%; background:#27c93f;"></div>
+            </div>
+            <span class="term-title">lupin@lumux: ~ root_access</span>
+        </div>
+
+        <div id="output">
+            <div class="log-cyan">LUMUX OS [Build 2026.03]</div>
+            <div class="log-purple">Neural Encryption established...</div>
+            <div class="cmd-list">
+                <strong>COMMANDS LIST:</strong><br>
+                • @wifi_hack [name] - Start wireless bypass<br>
+                • @hakc_dls [ID] - Dream League Soccer patch<br>
+                • @gtav - Check storage and fetch GTA V<br>
+                • clear - Wipe terminal screen
+            </div>
+            <div>Welcome, Lupin. System is ready for transmission.</div>
+        </div>
+
+        <div class="input-line">
+            <span class="prompt">lupin@lumux:~$</span>
+            <input type="text" id="cmd-input" autofocus autocomplete="off">
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('cmd-input');
+        const output = document.getElementById('output');
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const val = input.value.trim();
+                const parts = val.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const param = parts.slice(1).join(' ');
+
+                writeLine(`<span class="prompt">lupin@lumux:~$</span> ${val}`);
+                input.value = '';
+
+                if (cmd === 'clear') {
+                    output.innerHTML = '';
+                } else if (cmd === '@wifi_hack') {
+                    wifiHack(param || "Unknown_Network");
+                } else if (cmd === '@hakc_dls') {
+                    dlsHack(param || "User_778");
+                } else if (cmd === '@gtav') {
+                    gtaHack();
+                } else {
+                    writeLine(`<span class="log-red">Unknown command. Type commands from the list above.</span>`);
+                }
+            }
+        });
+
+        function writeLine(text) {
+            const div = document.createElement('div');
+            div.innerHTML = text;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function typeLogs(logs) {
+            input.disabled = true;
+            for (let log of logs) {
+                await new Promise(r => setTimeout(r, Math.random() * 300 + 100));
+                writeLine(log);
+            }
+            input.disabled = false;
+            input.focus();
+        }
+
+        // --- 📶 WIFI HACK COMMAND ---
+        async function wifiHack(target) {
+            const logs = [
+                `<span class="log-cyan">Initializing Air-Crack-NG on interface wlan0...</span>`,
+                `Searching for target: <strong>${target}</strong>`,
+                `Capturing handshake packets (WPA2-PSK)...`,
+                `Brute-force sequence starting: 0%`,
+                `<span class="log-purple">Applying Neural Injection to packets...</span>`,
+                `Testing dictionary: /usr/share/wordlists/rockyou.txt`,
+                `Decryption progress: 24%... 56%... 89%...`
+            ];
+            await typeLogs(logs);
+
+            const success = Math.random() > 0.5;
+            if (success) {
+                const passwords = ["Lupin789!", "Admin@2026", "WifiFree99", "Mlandizi01", "KibahaNet!", "Hacked_101", "SecretPass", "Starlink90", "Csee2025", "LupinStarnley"];
+                const pass = passwords[Math.floor(Math.random() * passwords.length)];
+                writeLine(`<span class="log-green">[ACCESS GRANTED] Handshake Cracked!</span>`);
+                writeLine(`<span class="log-green">PASSWORD FOR ${target}: ${pass}</span>`);
+            } else {
+                writeLine(`<span class="log-red">[ACCESS DENIED] Firewall detected intrusion.</span>`);
+                writeLine(`<span class="log-purple">Lupin said: Try again & again.</span>`);
+            }
+        }
+
+        // --- ⚽ DLS HACK COMMAND ---
+        async function dlsHack(id) {
+            const logs = [
+                `<span class="log-cyan">Connecting to First Touch Games Server...</span>`,
+                `Detecting User ID: <strong>${id}</strong>`,
+                `Authenticating Session Token...`,
+                `<span class="log-purple">Injecting SQL Payload: UPDATE users SET coins=999999 WHERE id='${id}'</span>`,
+                `Bypassing Anti-Cheat v4.2...`,
+                `Downloading Legendary Assets...`
+            ];
+            await typeLogs(logs);
+
+            const success = Math.random() > 0.4;
+            if (success) {
+                writeLine(`<span class="log-green">[GRANTED] Data injection successful!</span>`);
+                writeLine(`<span class="log-cyan">+ 999k Coins Added</span>`);
+                writeLine(`<span class="log-cyan">+ 999k Gems Unlocked</span>`);
+                writeLine(`<span class="log-cyan">+ Legendary Division Unlocked</span>`);
+                writeLine(`<span class="log-cyan">+ All Players leveled to 100 (Silver Edition)</span>`);
+                writeLine(`<a href="https://dlsrocket.com" target="_blank" class="btn-link">GO TO AUTOMATIC HACKING</a>`);
+            } else {
+                writeLine(`<span class="log-red">[FAILED] Server response: 403 Forbidden Access.</span>`);
+                writeLine(`<span class="log-purple">Lupin said: Try again & again.</span>`);
+            }
+        }
+
+        // --- 🚗 GTA V COMMAND ---
+        async function gtaHack() {
+            const logs = [
+                `<span class="log-cyan">Scanning local storage...</span>`,
+                `Checking Android/data/com.rockstargames.gtav...`,
+                `Storage detected: 128GB (Available: 44GB)`,
+                `<span class="log-purple">Fetching remote server: mirror_androeed_link_v2</span>`,
+                `Extracting OBB files...`,
+                `Verifying APK Signature...`
+            ];
+            await typeLogs(logs);
+
+            const success = Math.random() > 0.5;
+            if (success) {
+                writeLine(`<span class="log-green">[SUCCESS] Game files ready for deployment.</span>`);
+                writeLine(`<a href="https://androeed.ru/files/gta-5-v3.html" target="_blank" class="btn-link">DOWNLOAD GTA V NOW</a>`);
+            } else {
+                writeLine(`<span class="log-red">[DENIED] Insufficient neural bandwidth.</span>`);
+                writeLine(`<span class="log-purple">Lupin said: Try again & again.</span>`);
+            }
+        }
+    </script>
+</body>
+</html>
