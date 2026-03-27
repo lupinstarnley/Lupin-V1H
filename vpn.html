@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN OMNI-SEARCH | VPN PROXY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --bg: #02020a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body { background: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; overflow-x: hidden; min-height: 100vh; }
+
+        /* 🌌 Advanced Space & Solar System Background */
+        #space-canvas { position: fixed; top: 0; left: 0; z-index: -2; width: 100%; height: 100%; }
+        .sun { position: fixed; top: 50%; left: 50%; width: 60px; height: 60px; background: radial-gradient(#fff, #ff8c00); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 50px #ff4500; z-index: -1; opacity: 0.6; }
+        
+        /* ☄️ Comets */
+        .comet { position: absolute; width: 2px; height: 100px; background: linear-gradient(to bottom, transparent, #fff); opacity: 0; animation: flash 5s linear infinite; }
+        @keyframes flash { 0% { transform: translateY(-100px) translateX(0) rotate(-45deg); opacity: 1; } 100% { transform: translateY(100vh) translateX(100vw) rotate(-45deg); opacity: 0; } }
+
+        /* 🌀 Glowing Search Ring */
+        .search-container { 
+            max-width: 900px; margin: 50px auto; padding: 20px; text-align: center; z-index: 10; position: relative;
+        }
+        .glow-ring {
+            width: 150px; height: 150px; border: 3px solid var(--primary); border-radius: 50%;
+            margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px var(--primary), inset 0 0 30px var(--primary);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
+
+        .search-bar {
+            display: flex; background: var(--glass); border: 2px solid var(--primary); border-radius: 50px;
+            padding: 10px 20px; backdrop-filter: blur(10px); gap: 10px;
+        }
+        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 18px; }
+        button { background: var(--primary); border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+
+        /* 🖼️ Results Area (The Tunnel) */
+        #viewport {
+            width: 100%; height: 600px; margin-top: 40px; border-radius: 20px;
+            border: 2px solid var(--secondary); background: white; display: none; overflow: hidden;
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        #image-results {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 30px;
+        }
+        .img-card { border-radius: 15px; overflow: hidden; border: 1px solid var(--primary); transition: 0.3s; }
+        .img-card img { width: 100%; height: 150px; object-fit: cover; }
+        .img-card:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--primary); }
+
+        .status-tag { font-size: 12px; color: #00ff41; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div id="space-canvas"></div>
+    <div class="sun"></div>
+
+    <div class="search-container">
+        <div class="glow-ring">
+            <i class="fas fa-shield-halved" style="font-size: 50px; color: var(--primary);"></i>
+        </div>
+        
+        <div class="status-tag"><i class="fas fa-satellite-dish"></i> VPN Tunnel: Encrypted</div>
+        <h1 style="font-family: 'Outfit'; font-size: 40px; margin-bottom: 20px;">LUPIN OMNI-VPN</h1>
+        <p>Hey <span id="user-display" style="color:var(--secondary)">@user</span>, search images or websites anonymously.</p>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Enter URL (e.g. google.com) or search images...">
+            <button onclick="omniSearch()">TUNNEL IN <i class="fas fa-bolt"></i></button>
+        </div>
+
+        <div id="image-results"></div>
+
+        <div id="viewport">
+            <iframe id="proxyFrame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        const user = localStorage.getItem('systemUser') || "Lupin_Admin";
+        document.getElementById('user-display').innerText = user.toUpperCase();
+
+        async function omniSearch() {
+            const input = document.getElementById('searchInput').value;
+            const imgArea = document.getElementById('image-results');
+            const viewport = document.getElementById('viewport');
+            const frame = document.getElementById('proxyFrame');
+
+            if(!input) return;
+
+            // 1. Kama ni URL, fungua kupitia Proxy Site
+            if(input.includes('.') || input.startsWith('http')) {
+                imgArea.style.display = 'none';
+                viewport.style.display = 'block';
+                // Tunatumia ProxySite redirect kuzuia ulinzi wa CORS
+                let cleanUrl = input.replace('https://', '').replace('http://', '');
+                frame.src = `https://www.proxysite.com/includes/process.php?action=update&server=us1&d=${cleanUrl}`;
+            } 
+            // 2. Kama ni maneno ya kawaida, vuta picha kutoka DuckDuckGo (via Proxy)
+            else {
+                viewport.style.display = 'none';
+                imgArea.style.display = 'grid';
+                imgArea.innerHTML = `<p>🛰️ Scanning Deep Web for "${input}"...</p>`;
+
+                try {
+                    // Kuvuta picha kupitia DuckDuckGo Instant Answer API (limited) au Scraper
+                    const proxy = "https://api.allorigins.win/get?url=";
+                    const ddgImgUrl = encodeURIComponent(`https://api.duckduckgo.com/?q=${input}&format=json`);
+                    
+                    const response = await fetch(proxy + ddgImgUrl);
+                    const data = await response.json();
+                    const content = JSON.parse(data.contents);
+
+                    if(content.Image) {
+                        imgArea.innerHTML = `
+                            <div class="img-card">
+                                <img src="${content.Image}" alt="result">
+                                <p style="padding:10px; font-size:12px;">${content.Heading}</p>
+                            </div>
+                        `;
+                    } else {
+                        imgArea.innerHTML = `<p>❌ No direct images found for "${input}". Try searching for "Tanzania" or "Hacking".</p>`;
+                    }
+                } catch (e) {
+                    imgArea.innerHTML = `<p>Error connecting to Tunnel.</p>`;
+                }
+            }
+        }
+
+        // 🌌 Star Generation & Comets
+        const bg = document.getElementById('space-canvas');
+        for(let i=0; i<150; i++) {
+            let star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.background = 'white';
+            star.style.width = Math.random() * 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.borderRadius = '50%';
+            star.style.opacity = Math.random();
+            bg.appendChild(star);
+        }
+
+        setInterval(() => {
+            let comet = document.createElement('div');
+            comet.className = 'comet';
+            comet.style.left = Math.random() * 50 + 'vw';
+            comet.style.top = '-100px';
+            document.body.appendChild(comet);
+            setTimeout(() => comet.remove(), 5000);
+        }, 3000);
+    </script>
+</body>
+</html>
