@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LupinHack Dashboard</title>
+    <title>LupinHack Dashboard | 4K Edition</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="space-bg"></div>
@@ -13,26 +14,39 @@
     <header>
         <div class="logo">LupinHack⚡</div>
         <nav class="nav-links">
-            <a href="#"><i class="fas fa-home"></i> HOME</a>
-            <a href="#"><i class="fas fa-code"></i> TOOLS</a>
-            <a href="#" class="agent-display"><i class="fas fa-user-shield"></i> <span id="displayAgent">AGENT</span></a>
-            <a href="#" onclick="logout()" style="color: #ff4b2b;"><i class="fas fa-sign-out-alt"></i> EXIT</a>
+            <a href="index.html"><i class="fas fa-home"></i> HOME</a>
+            <a href="movies.html"><i class="fas fa-film"></i> MOVIES</a>
+            <div class="agent-box">
+                <i class="fas fa-user-shield"></i> <span id="displayAgent">AGENT</span>
+            </div>
+            <a href="#" onclick="logout()" style="color: #ff4b2b; margin-left: 15px;"><i class="fas fa-sign-out-alt"></i> EXIT</a>
         </nav>
     </header>
 
     <div class="status-bar">
-        ● ALL SYSTEMS OPERATIONAL | STATUS: SECURE | ENCRYPTED LINK ACTIVE 🥂
+        ● ALL SYSTEMS OPERATIONAL | STATUS: SECURE | DEVELOPER: LUPIN 🥂
     </div>
 
     <section class="hero">
         <div class="quote-box">
             <p>"Boredom is just the doorway to intuition — sit through it, and the signal clears."</p>
-            <h4 style="margin-top: 15px; color: var(--accent);">— LUPIN STARNLEY JIMMOH</h4>
+            <h4 style="margin-top: 15px; color: var(--accent); letter-spacing: 3px;">— LUPIN STARNLEY JIMMOH</h4>
         </div>
     </section>
 
     <div class="main-container">
-        <div class="topic-row" onclick="alert('Accessing Database...')">
+        <div class="topic-row glow-border" onclick="window.location.href='movies.html'">
+            <div class="topic-info">
+                <div class="topic-icon" style="color: #ff00ff;">🎬</div>
+                <div>
+                    <div class="topic-title">ACCESS MOVIE DATABASE <span class="tag tag-free">LIVE</span></div>
+                    <div class="topic-meta">Search, Watch, and Download directly from the high-speed server.</div>
+                </div>
+            </div>
+            <span class="btn-join">ENTER CINEMA</span>
+        </div>
+
+        <div class="topic-row glow-border" onclick="alert('Accessing Database...')">
             <div class="topic-info">
                 <div class="topic-icon">🛡️</div>
                 <div>
@@ -43,7 +57,7 @@
             <span class="btn-join">EXTRACT</span>
         </div>
 
-        <div class="topic-row" onclick="alert('Opening Tutorial...')">
+        <div class="topic-row glow-border" onclick="alert('Opening Tutorial...')">
             <div class="topic-info">
                 <div class="topic-icon">🔥</div>
                 <div>
@@ -53,7 +67,17 @@
             </div>
             <span class="btn-join">READ DATA</span>
         </div>
+
+        <div class="bio-container">
+            <h2 class="bio-title">DEVELOPER INTEL REPORT</h2>
+            <div id="typewriter" class="bio-text"></div>
+        </div>
     </div>
+
+    <footer class="footer-4k">
+        <p>Made with <span style="color: #00ff41;">💚</span> in Tanzania</p>
+        <p class="copyright">© 2026 <span class="special-signature">Lupin Starnley Jimmoh</span></p>
+    </footer>
 
     <script>
         // Check if logged in
@@ -61,13 +85,26 @@
         if(!agent) {
             window.location.href = 'login.html';
         } else {
-            document.getElementById('displayAgent').innerText = "AGENT " + agent;
+            document.getElementById('displayAgent').innerText = agent;
         }
 
         function logout() {
             localStorage.clear();
             window.location.href = 'login.html';
         }
+
+        // --- TYPEWRITER EFFECT LOGIC ---
+        const bioText = "Initializing developer profile... Name: Lupin. Origin: Kibaha, Tanzania. Occupation: IT Mastermind & Ethical Explorer. Lupin is not just a developer; he is a digital architect crafting the future of the Tanzanian web. With a deep passion for 3rd person open-world games and high-end tech, he built LupinHack to be the ultimate hub for those who dare to learn. The mission is simple: Together WE Learn. Stay focused, stay encrypted, and welcome to the inner circle of the Lupin network. The signal is clear, the path is yours...";
+        
+        let index = 0;
+        function typeEffect() {
+            if (index < bioText.length) {
+                document.getElementById("typewriter").innerHTML += bioText.charAt(index);
+                index++;
+                setTimeout(typeEffect, 50); // Speed of typing
+            }
+        }
+        window.onload = typeEffect;
 
         // Stars Background
         const space = document.getElementById('space-bg');
