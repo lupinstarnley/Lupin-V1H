@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN MOVIES | CINEMATIC ENGINE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ================= KANUNI ZA RANGI (Kama Index) ================= */
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f0;
+            --text-muted: #a0a5b5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+        /* ================= BACKGROUND YA ANGA ================= */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.2; transform: scale(0.8); } }
+
+        .comet {
+            position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6);
+            animation: shootingStar 6s infinite linear; opacity: 0; z-index: -1;
+        }
+        @keyframes shootingStar {
+            0% { transform: translate(120vw, -20vh) rotate(-45deg); opacity: 1; }
+            20% { transform: translate(-20vw, 120vh) rotate(-45deg); opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* ================= HEADER & NAVIGATION ================= */
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { 
+            font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+
+        .music-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--primary); width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.4s;
+        }
+
+        .user-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--secondary); padding: 8px 20px; 
+            border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 700; color: white;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(176, 38, 255, 0.2);
+        }
+
+        /* ================= MOVIE SEARCH AREA ================= */
+        .movie-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+        .search-card {
+            background: var(--glass-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 25px;
+            padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .search-wrapper { display: flex; background: rgba(0,0,0,0.4); border-radius: 50px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
+        .search-wrapper input {
+            flex: 1; background: transparent; border: none; padding: 12px 25px;
+            color: white; font-size: 16px; outline: none;
+        }
+        .search-wrapper button {
+            background: linear-gradient(45deg, var(--primary), #0099ff); color: #000;
+            border: none; padding: 0 30px; border-radius: 40px; font-weight: 800;
+            cursor: pointer; transition: 0.3s; font-family: 'Outfit', sans-serif;
+        }
+
+        /* ================= RESULTS GRID ================= */
+        .results-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px;
+        }
+        .video-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            overflow: hidden; transition: 0.4s ease;
+        }
+        .video-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.2); }
+        
+        .video-card img { width: 100%; height: 160px; object-fit: cover; }
+        
+        .video-details { padding: 18px; }
+        .video-title { 
+            font-size: 14px; font-weight: 600; height: 42px; 
+            overflow: hidden; color: white; line-height: 1.5; margin-bottom: 15px;
+        }
+
+        .action-btns { display: flex; gap: 10px; }
+        .btn-act {
+            flex: 1; padding: 10px; text-align: center; font-weight: 700;
+            text-decoration: none; font-size: 12px; border-radius: 10px; transition: 0.3s;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-watch { background: var(--primary); color: #000; }
+        .btn-watch:hover { box-shadow: 0 0 15px var(--primary); }
+        
+        .btn-download { background: transparent; border: 1px solid var(--secondary); color: var(--secondary); }
+        .btn-download:hover { background: var(--secondary); color: white; box-shadow: 0 0 15px var(--secondary); }
+
+        /* ================= MUSIC POPUP ================= */
+        #music-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,5,16,0.9); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .popup-box {
+            background: var(--glass-bg); border: 1px solid var(--primary);
+            padding: 40px; border-radius: 25px; text-align: center; max-width: 400px;
+        }
+        .popup-box h2 { color: var(--primary); margin-bottom: 15px; font-family: 'Outfit', sans-serif; }
+        .popup-btn {
+            background: var(--primary); border: none; padding: 12px 30px; border-radius: 10px;
+            font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+
+        nav a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 13px; margin-right: 20px; transition: 0.3s; }
+        nav a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <div id="music-popup">
+        <div class="popup-box">
+            <h2>CINEMA MODE</h2>
+            <p>Allow system audio for the full cinematic experience.</p>
+            <button class="popup-btn" onclick="initCinema()">ENTER CINEMA</button>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <div class="logo">LUPIN MOVIES</div>
+        <nav style="display: flex; align-items: center;">
+            <a href="index.html">HOME</a>
+            <div class="header-controls">
+                <button class="music-btn" onclick="toggleMusic()" id="musicToggleBtn"><i class="fas fa-play"></i></button>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle"></i> <span id="displayAgent">GUEST</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="movie-container">
+        <div class="search-card">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 24px;"><i class="fas fa-search" style="color: var(--secondary);"></i> SEARCH MOVIE ENGINE</h3>
+            <div class="search-wrapper">
+                <input type="text" id="query" placeholder="Enter movie name, series or genre...">
+                <button onclick="searchYouTube()">SEARCH</button>
+            </div>
+        </div>
+
+        <div id="results" class="results-grid">
+            </div>
+    </div>
+
+    <script>
+        // ================= SYSTEM CONFIG =================
+        const agent = localStorage.getItem('systemUser') || "GUEST";
+        document.getElementById('displayAgent').innerText = agent.toUpperCase();
+
+        const API_KEY = 'AIzaSyDl2jrRffbN4qyY81iCNDD1zETMqn8hoFA';
+        const music = document.getElementById("bg-music");
+        const musicBtn = document.getElementById("musicToggleBtn");
+        let isPlaying = false;
+
+        // Music Init
+        function initCinema() {
+            document.getElementById('music-popup').style.display = 'none';
+            music.play().catch(e => console.log("Audio started"));
+            isPlaying = true;
+            musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            musicBtn.style.color = "#00ff41";
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerHTML = '<i class="fas fa-play"></i>';
+                musicBtn.style.color = "var(--primary)";
+            } else {
+                music.play();
+                musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                musicBtn.style.color = "#00ff41";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // ================= YOUTUBE SEARCH ENGINE =================
+        async function searchYouTube() {
+            const query = document.getElementById('query').value;
+            if(!query) return;
+
+            document.getElementById('results').innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--primary);"></i>
+                    <p style="margin-top: 15px; letter-spacing: 2px;">FETCHING CINEMATIC DATA...</p>
+                </div>`;
+
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&q=${query}&type=video&key=${API_KEY}`;
+            
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if(data.items) {
+                    renderVideos(data.items);
+                } else {
+                    document.getElementById('results').innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ff4b2b;">Quota Limit Exceeded. Try again later.</p>`;
+                }
+            } catch (err) {
+                document.getElementById('results').innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ff4b2b;">Connection Lost. Verify Network.</p>`;
+            }
+        }
+
+        function renderVideos(videos) {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            videos.forEach(v => {
+                const id = v.id.videoId;
+                const title = v.snippet.title;
+                const thumb = v.snippet.thumbnails.high.url;
+
+                results.innerHTML += `
+                    <div class="video-card">
+                        <img src="${thumb}">
+                        <div class="video-details">
+                            <div class="video-title">${title}</div>
+                            <div class="action-btns">
+                                <a href="https://www.youtube.com/watch?v=${id}" target="_blank" class="btn-act btn-watch">WATCH NOW</a>
+                                <a href="https://www.ssyoutube.com/watch?v=${id}" target="_blank" class="btn-act btn-download">DOWNLOAD</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= COSMIC BACKGROUND =================
+        function generateStars() {
+            const space = document.getElementById('universe-bg');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                let size = Math.random() * 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                space.appendChild(star);
+            }
+            // Add Comets
+            for (let j = 0; j < 3; j++) {
+                const comet = document.createElement('div');
+                comet.className = 'comet';
+                comet.style.top = (Math.random() * 100) + 'vh';
+                comet.style.animationDelay = (j * 2) + 's';
+                space.appendChild(comet);
+            }
+        }
+        generateStars();
+
+        // Default Load
+        window.onload = () => {
+            document.getElementById('query').value = "New Hollywood Action Movies 2026";
+            searchYouTube();
+        };
+    </script>
+</body>
+</html>
