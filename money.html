@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN EARN | NEURAL ECONOMY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #02020a;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --gold: #ffd700;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 229, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-deep); color: white; min-height: 100vh; overflow-x: hidden; }
+
+        /* 🌌 Space Background */
+        #space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #02020a 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+        header {
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--primary); }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .page-title { text-align: center; margin-bottom: 40px; font-family: 'Outfit', sans-serif; }
+        .page-title h1 { font-size: 32px; color: var(--gold); }
+
+        /* 💰 Money Cards */
+        .earn-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 25px;
+            padding: 30px; margin-bottom: 30px; backdrop-filter: blur(15px);
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .earn-card:hover { border-color: var(--secondary); transform: scale(1.01); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .site-name { font-size: 22px; font-weight: 900; color: var(--primary); font-family: 'Outfit', sans-serif; }
+        .daily-stat { font-size: 14px; color: var(--gold); font-weight: bold; }
+
+        .description { font-size: 15px; line-height: 1.6; margin-bottom: 20px; color: #d0d0d0; }
+        .highlight { color: var(--secondary); font-weight: bold; }
+
+        .btn-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn { 
+            padding: 10px 25px; border-radius: 30px; text-decoration: none; 
+            font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .btn-watch { background: #ff0000; color: white; }
+        .btn-go { background: var(--primary); color: black; }
+        .btn-26pesa { background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; width: 100%; justify-content: center; font-size: 16px; padding: 15px; }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        /* 📊 Summary Section */
+        .summary-box {
+            background: rgba(176, 38, 255, 0.1); border: 2px solid var(--secondary);
+            border-radius: 25px; padding: 30px; margin-top: 50px;
+        }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; }
+        .stat-item h3 { font-size: 12px; opacity: 0.7; text-transform: uppercase; }
+        .stat-item p { font-size: 20px; font-weight: 900; color: var(--primary); }
+
+        /* 📲 WhatsApp Support */
+        .support-btn {
+            position: fixed; bottom: 30px; right: 30px; background: #25d366;
+            width: 60px; height: 60px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 30px;
+            color: white; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+            cursor: pointer; z-index: 1000; transition: 0.3s;
+        }
+        .support-btn:hover { transform: scale(1.1) rotate(10deg); }
+
+        footer { text-align: center; padding: 40px; font-size: 12px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <div id="space-bg"></div>
+
+    <header>
+        <div class="logo">LUPIN EARN v1.0</div>
+        <a href="index.html" style="color:white; text-decoration:none; font-size:12px;"><i class="fas fa-arrow-left"></i> BACK</a>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Financial Freedom Hub</h1>
+            <p>Hey <span id="user-display" class="highlight">@user</span>, hapa ndipo tunapozindua utajiri wa kidijitali!</p>
+        </div>
+
+        <div class="earn-card">
+            <div class="card-header">
+                <div class="site-name">SPROUTGIGS</div>
+                <div class="daily-stat">Earn: $5 (TZS 13,750) / Day</div>
+            </div>
+            <div class="description">
+                Mambo vipi <span class="highlight user-name">@user</span>? SproutGigs ni sehemu unayolipwa kwa kufanya kazi ndogo ndogo (Micro-tasks). Unaweza kulipwa kwa ku-subscribe YouTube, ku-like picha, au ku-test websites. Mimi kama mtumiaji mzoefu, nakuhakikishia ukiwa serious hapa unapata hela ya bando na kula kila siku. 
+                <br><br>
+                <strong>Withdraw:</strong> Unaweza kutoa kupitia Litecoin (Crypto) kisha kwenda M-Pesa kwa kutumia Binance P2P. 
+                <strong>Limit:</strong> Max $10 kwa siku ukiwa na speed.
+            </div>
+            <div class="btn-group">
+                <a href="https://www.youtube.com/results?search_query=how+to+earn+on+sproutgigs+tanzania" target="_blank" class="btn btn-watch"><i class="fab fa-youtube"></i> WATCH TUTORIAL</a>
+                <a href="https://sproutgigs.com" target="_blank" class="btn btn-go">START WORK <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="earn-card">
+            <div class="card-header">
+                <div class="site-name">FREECASH</div>
+                <div class="daily-stat">Earn: $5 (TZS 13,750) / Day</div>
+            </div>
+            <div class="description">
+                Sikiliza <span class="highlight user-name">@user</span>, Freecash ndio website yenye kutoa hela kwa haraka zaidi duniani. Unalipwa kwa kucheza magemu na kujaza surveys. Sifa yake kuu ni kwamba ukishatengeneza $5, unaweza kuitoa hapo hapo. 
+                <br><br>
+                <strong>Withdraw:</strong> Bitcoin, PayPal, au Gift Cards za Google Play. 
+                <strong>Limit:</strong> $15 kwa siku ukiingia deep.
+            </div>
+            <div class="btn-group">
+                <a href="https://www.youtube.com/results?search_query=freecash+tutorial+tanzania" target="_blank" class="btn btn-watch"><i class="fab fa-youtube"></i> WATCH TUTORIAL</a>
+                <a href="https://freecash.com" target="_blank" class="btn btn-go">START EARNING <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="earn-card">
+            <div class="card-header">
+                <div class="site-name">TOLOKA (YANDEX)</div>
+                <div class="daily-stat">Earn: $5 (TZS 13,750) / Day</div>
+            </div>
+            <div class="description">
+                Hapa <span class="highlight user-name">@user</span> unakuwa kama msaidizi wa AI. Toloka inakupa kazi rahisi kama kuangalia picha na kusema kama zinaendana. Ni rahisi sana kutumia ukiwa kwenye daladala au mapumziko chuoni.
+                <br><br>
+                <strong>Withdraw:</strong> Payoneer (ambayo unaweza ku-link na bank yako ya TZ kama NMB/CRDB). 
+                <strong>Limit:</strong> $7 kwa siku.
+            </div>
+            <div class="btn-group">
+                <a href="https://www.youtube.com/results?search_query=toloka+yandex+tutorial+tanzania" target="_blank" class="btn btn-watch"><i class="fab fa-youtube"></i> WATCH TUTORIAL</a>
+                <a href="https://toloka.ai" target="_blank" class="btn btn-go">GET TASKS <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="earn-card">
+            <div class="card-header">
+                <div class="site-name">EXNESS (FOREX/AFFILIATE)</div>
+                <div class="daily-stat">Earn: $10+ (TZS 27,500+) / Day</div>
+            </div>
+            <div class="description">
+                Hapa sasa ndipo kwenye utaalamu wa hali ya juu <span class="highlight user-name">@user</span>. Exness ni broker wa Forex anayekubali <strong>M-PESA na TIGO-PESA</strong>. Unaweza kutengeneza hela kwa ku-trade (Forex) au kwa kuwashirikisha wengine (Partnership).
+                <br><br>
+                <strong>Withdraw:</strong> Moja kwa moja kwenye M-Pesa yako (Inachukua dakika 5 tu!).
+                <strong>Limit:</strong> Haina kikomo (Unlimited).
+            </div>
+            <div class="btn-group">
+                <a href="https://www.youtube.com/results?search_query=how+to+use+exness+in+tanzania+m-pesa" target="_blank" class="btn btn-watch"><i class="fab fa-youtube"></i> WATCH TUTORIAL</a>
+                <a href="https://www.exness.com" target="_blank" class="btn btn-go">OPEN ACCOUNT <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+
+        <div class="earn-card" style="border: 2px solid var(--gold); background: rgba(255, 215, 0, 0.05);">
+            <div class="card-header">
+                <div class="site-name" style="color: var(--gold);">26PESA | PREMIUM VIDEO EARNING</div>
+                <div class="daily-stat">Earn: TZS 30,000+ / Day</div>
+            </div>
+            <div class="description">
+                Hii ndio fursa ya kijasusi zaidi kwako <span class="highlight user-name">@user</span>. Unalipwa TZS 2,000 kwa kila video ya dakika 2 unayoangalia. Video ni za maadili na zinatoka mitandao maarufu.
+                <br><br>
+                <strong>Requirements:</strong> Unahitaji mtaji wa kuanzia wa <strong>TZS 14,000</strong> tu (startup fee).
+                <strong>Faida:</strong> Ukishalipia, unapata <strong>Bonus ya TZS 5,000</strong> hapo hapo na kuanza kazi. 
+                <strong>Work Time:</strong> Masaa 3 tu kwa siku yanatosha kupiga mpaka TZS 50,000.
+            </div>
+            <a href="https://26pesa.store/page/reg.php?reg=Mr@lupin76" target="_blank" class="btn btn-26pesa">
+                <i class="fas fa-rocket"></i> START EARNING ON 26PESA NOW
+            </a>
+        </div>
+
+        <div class="summary-box">
+            <h2 style="text-align:center; margin-bottom:25px; font-family:'Outfit';">TOTAL POTENTIAL EARNINGS</h2>
+            <div class="summary-grid">
+                <div class="stat-item">
+                    <h3>Total Daily Cash</h3>
+                    <p>~$45.00 / TZS 123,750</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Time Investment</h3>
+                    <p>~7 Hours / Day</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Data Usage</h3>
+                    <p>~1.5 GB / Day</p>
+                </div>
+            </div>
+            <p style="text-align:center; margin-top:20px; font-size:12px; opacity:0.7;">
+                *Mahesabu haya ni makadirio ukiwa serious kama Lupin. Matokeo yanategemea juhudi yako <span class="user-name">@user</span>.
+            </p>
+        </div>
+    </div>
+
+    <div class="support-btn" onclick="contactLupin()">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+
+    <footer>
+        Made with ❤️ in Tanzania | Designed by Lupin Starnley Jimmoh
+    </footer>
+
+    <script>
+        // Get Username
+        const username = localStorage.getItem('systemUser') || "Guest_Investor";
+        document.getElementById('user-display').innerText = username.toUpperCase();
+        document.querySelectorAll('.user-name').forEach(el => el.innerText = username.toUpperCase());
+
+        // 🌌 Generate Stars
+        const bg = document.getElementById('space-bg');
+        for(let i=0; i<100; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 2 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(star);
+        }
+
+        // WhatsApp Function
+        function contactLupin() {
+            const phone = "255782754785";
+            const msg = `Hello Lupin, it's me ${username.toUpperCase()}. I have seen your Earn Hub. I need professional guidance on how to maximize my daily earnings on these platforms.`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
