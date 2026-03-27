@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN GAME HOST | NEURAL PLAY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #02020a;
+            --primary: #00e5ff; /* Cyan */
+            --secondary: #b026ff; /* Purple */
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 229, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-deep); color: white; min-height: 100vh; overflow-x: hidden; }
+
+        /* 🌌 Animated Space Background */
+        #space-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #02020a 100%); overflow: hidden; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: moveStar 50s linear infinite; }
+        @keyframes moveStar { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
+
+        /* ☄️ Comets */
+        .comet { position: absolute; width: 2px; height: 100px; background: linear-gradient(to bottom, transparent, var(--primary)); opacity: 0; animation: cometAnim 10s linear infinite; }
+        @keyframes cometAnim { 
+            0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 0; }
+            10% { opacity: 1; }
+            20% { transform: translateX(500px) translateY(500px) rotate(-45deg); opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* 🪐 Solar System Animation */
+        .solar-system { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; width: 500px; height: 500px; opacity: 0.4; }
+        .sun { position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; background: radial-gradient(#fff700, #ff8c00); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 40px #ff8c00; }
+        .orbit { position: absolute; top: 50%; left: 50%; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; transform: translate(-50%, -50%); }
+        .planet { position: absolute; border-radius: 50%; }
+        
+        .orbit-1 { width: 150px; height: 150px; animation: rotate 5s linear infinite; }
+        .planet-1 { width: 15px; height: 15px; background: var(--primary); top: -7px; left: 50%; box-shadow: 0 0 10px var(--primary); }
+        
+        .orbit-2 { width: 250px; height: 250px; animation: rotate 10s linear infinite; }
+        .planet-2 { width: 25px; height: 25px; background: var(--secondary); bottom: -12px; left: 50%; box-shadow: 0 0 15px var(--secondary); }
+
+        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Header */
+        header {
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .user-tag { background: var(--glass); padding: 8px 20px; border-radius: 30px; border: 1px solid var(--border); font-size: 13px; font-weight: bold; color: var(--primary); }
+
+        /* Games Grid */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        h2 { margin-bottom: 30px; font-family: 'Outfit', sans-serif; font-size: 32px; letter-spacing: 2px; }
+
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+        
+        .game-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 25px;
+            padding: 20px; transition: 0.4s; cursor: pointer; text-decoration: none;
+            display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(10px);
+        }
+        .game-card:hover { 
+            transform: translateY(-10px) scale(1.03); 
+            background: rgba(176, 38, 255, 0.1); 
+            border-color: var(--secondary);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+        .game-icon { width: 70px; height: 70px; border-radius: 20px; margin-bottom: 15px; object-fit: cover; border: 2px solid var(--primary); }
+        .game-name { font-weight: 700; font-size: 16px; color: white; margin-bottom: 5px; }
+        .play-btn { font-size: 12px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
+
+        /* Action Buttons */
+        .actions { margin-top: 50px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .btn { 
+            padding: 12px 30px; border-radius: 30px; border: none; font-weight: 900; 
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+            text-decoration: none; font-family: 'Outfit', sans-serif;
+        }
+        .btn-exit { background: #ff3e3e; color: white; }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn:hover { transform: scale(1.1); filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <div id="space-container"></div>
+    
+    <div class="solar-system">
+        <div class="sun"></div>
+        <div class="orbit orbit-1"><div class="planet planet-1"></div></div>
+        <div class="orbit orbit-2"><div class="planet planet-2"></div></div>
+    </div>
+
+    <header>
+        <div class="logo">LUPIN GAME HOST</div>
+        <div class="user-tag"><i class="fas fa-ghost"></i> <span id="username-display">GUEST</span></div>
+    </header>
+
+    <div class="container">
+        <h2><i class="fas fa-gamepad"></i> NEURAL ARCADE</h2>
+        
+        <div class="game-grid">
+            <a href="https://classic.minecraft.net/" class="game-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png" class="game-icon">
+                <div class="game-name">MINECRAFT CLASSIC</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://poki.com/en/g/subway-surfers" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/8e4012284c680655d4b857796d1101e4.png" class="game-icon">
+                <div class="game-name">SUBWAY SURFERS</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://venge.io/" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/545082496a090b396798030018d9611f.png" class="game-icon">
+                <div class="game-name">VENGE.IO (FPS)</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://shellshock.io/" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/e4a13327-0131-4835-b778-43d941bc482f.png" class="game-icon">
+                <div class="game-name">SHELL SHOCKERS</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://smashkarts.io/" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/f51253028c5040177728639255a64356.png" class="game-icon">
+                <div class="game-name">SMASH KARTS</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://poki.com/en/g/moto-x3m" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/87504f21-72f3-44d4-954f-12c85e2524d7.png" class="game-icon">
+                <div class="game-name">MOTO X3M</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://krunker.io/" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/0e1e905a-5264-469b-9f44-8d43681432f8.png" class="game-icon">
+                <div class="game-name">KRUNKER.IO</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://paper-io.com/" class="game-card">
+                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=312,height=312,fit=cover,f=auto/7f699042-4f32-4416-8a71-f9252c8a0bc7.png" class="game-icon">
+                <div class="game-name">PAPER.IO 2</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://www.crazygames.com/game/slope" class="game-card">
+                <img src="https://images.crazygames.com/slope.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=1200&h=630&fit=crop" class="game-icon">
+                <div class="game-name">SLOPE RUNNER</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+
+            <a href="https://miniroyale.io/" class="game-card">
+                <img src="https://images.crazygames.com/games/mini-royale-nations/cover-1636999464478.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=1200&h=630&fit=crop" class="game-icon">
+                <div class="game-name">MINI ROYALE</div>
+                <div class="play-btn">PLAY NOW <i class="fas fa-play"></i></div>
+            </a>
+        </div>
+
+        <div class="actions">
+            <a href="index.html" class="btn btn-exit">
+                <i class="fas fa-door-open"></i> EXIT TO HUB
+            </a>
+            <button onclick="suggestGame()" class="btn btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> SUGGEST NEW GAME
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Get Username from storage
+        const user = localStorage.getItem('systemUser') || "Guest_Pilot";
+        document.getElementById('username-display').innerText = user.toUpperCase();
+
+        // 🌌 Generate Stars
+        const container = document.getElementById('space-container');
+        for(let i=0; i<150; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 3 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = (Math.random() * 50 + 20) + 's';
+            container.appendChild(star);
+        }
+
+        // ☄️ Generate Comets
+        setInterval(() => {
+            let comet = document.createElement('div');
+            comet.className = 'comet';
+            comet.style.left = Math.random() * 80 + 'vw';
+            comet.style.top = '0';
+            container.appendChild(comet);
+            setTimeout(() => comet.remove(), 10000);
+        }, 4000);
+
+        // 📲 WhatsApp Suggestion
+        function suggestGame() {
+            const phone = "255782754785"; // Weka namba yako hapa bila alama ya +
+            const msg = `Hello Lupin, it's me ${user.toUpperCase()}. I would like to suggest a new game called [Write_Game_Name_Here]`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
