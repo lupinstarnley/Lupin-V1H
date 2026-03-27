@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LupinHack | Movie Search Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .movie-container { padding: 30px 5%; }
+        .search-box {
+            display: flex; gap: 10px; max-width: 700px; margin: 40px auto;
+        }
+        .search-box input {
+            flex: 1; padding: 15px; border-radius: 10px; border: 1px solid var(--accent);
+            background: rgba(255,255,255,0.05); color: white; outline: none;
+        }
+        .results-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px; margin-top: 30px;
+        }
+        .video-card {
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+        }
+        .video-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .video-card img { width: 100%; height: 160px; object-fit: cover; }
+        .video-details { padding: 15px; }
+        .video-title { font-size: 14px; font-weight: bold; height: 40px; overflow: hidden; color: var(--accent); }
+        .action-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-act { flex: 1; padding: 10px; text-align: center; border-radius: 5px; font-weight: 800; text-decoration: none; font-size: 12px; }
+        .btn-watch { background: var(--accent); color: black; }
+        .btn-download { background: #ff4b2b; color: white; }
+    </style>
+</head>
+<body>
+    <div id="space-bg"></div>
+
+    <header>
+        <div class="logo">LupinHack⚡</div>
+        <nav class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> HOME</a>
+            <a href="#" class="agent-display"><i class="fas fa-user-shield"></i> <span id="displayAgent">AGENT</span></a>
+            <a href="#" onclick="logout()" style="color: #ff4b2b;"><i class="fas fa-sign-out-alt"></i> EXIT</a>
+        </nav>
+    </header>
+
+    <div class="movie-container">
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Search Movies, Music or Tutorials...">
+            <button onclick="searchYouTube()" class="btn-primary" style="width: 120px;">SEARCH</button>
+        </div>
+
+        <div id="results" class="results-grid">
+            </div>
+    </div>
+
+    <script>
+        // 🔒 SECURITY CHECK: Kama haja-login, mtoe!
+        const agent = localStorage.getItem('agentName');
+        if(!agent) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('displayAgent').innerText = "AGENT " + agent;
+        }
+
+        const API_KEY = 'AIzaSyDl2jrRffbN4qyY81iCNDD1zETMqn8hoFA';
+
+        async function searchYouTube() {
+            const query = document.getElementById('query').value;
+            if(!query) return;
+
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${query}&type=video&key=${API_KEY}`;
+            
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                renderVideos(data.items);
+            } catch (err) {
+                alert("System Error: API Limit reached or Key Invalid.");
+            }
+        }
+
+        function renderVideos(videos) {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            videos.forEach(v => {
+                const id = v.id.videoId;
+                const title = v.snippet.title;
+                const thumb = v.snippet.thumbnails.high.url;
+
+                results.innerHTML += `
+                    <div class="video-card">
+                        <img src="${thumb}">
+                        <div class="video-details">
+                            <div class="video-title">${title}</div>
+                            <div class="action-btns">
+                                <a href="https://www.youtube.com/watch?v=${id}" target="_blank" class="btn-act btn-watch">WATCH</a>
+                                <a href="https://www.ssyoutube.com/watch?v=${id}" target="_blank" class="btn-act btn-download">DOWNLOAD</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Space Background
+        const space = document.getElementById('space-bg');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 50 + 20) + 's';
+            space.appendChild(star);
+        }
+
+        // Auto-load trending on start
+        window.onload = () => {
+            document.getElementById('query').value = "Trending Movies 2026";
+            searchYouTube();
+        };
+    </script>
+</body>
+</html>
