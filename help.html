@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN HELP CENTER | SYSTEM GUIDE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #02020a;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --gold: #ffd700;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 229, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-deep); color: white; min-height: 100vh; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* 🌌 Advanced Space Background */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #02020a 100%); overflow: hidden; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 4s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.9; } }
+
+        /* ☄️ Comets & Asteroids */
+        .comet { position: absolute; width: 2px; height: 150px; background: linear-gradient(to bottom, transparent, var(--primary)); opacity: 0; animation: cometFall 8s linear infinite; }
+        @keyframes cometFall { 0% { transform: translateX(0) translateY(-100px) rotate(-45deg); opacity: 1; } 100% { transform: translateX(800px) translateY(800px) rotate(-45deg); opacity: 0; } }
+        
+        .asteroid { position: absolute; width: 30px; height: 25px; background: #555; border-radius: 40% 60% 70% 30%; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); animation: floatAsteroid 20s linear infinite; opacity: 0.6; }
+        @keyframes floatAsteroid { from { transform: translate(-100px, -100px) rotate(0deg); } to { transform: translate(110vw, 110vh) rotate(360deg); } }
+
+        /* 🪐 Realistic Solar System */
+        .solar-system { position: fixed; top: 50%; right: -10%; transform: translateY(-50%); z-index: -1; width: 600px; height: 600px; opacity: 0.3; }
+        .sun { position: absolute; top: 50%; left: 50%; width: 80px; height: 80px; background: radial-gradient(#fff700, #ff4500); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 60px #ff4500, 0 0 100px #ff8c00; }
+        .orbit { position: absolute; top: 50%; left: 50%; border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 50%; transform: translate(-50%, -50%); }
+        .planet { position: absolute; border-radius: 50%; }
+        
+        .orbit-1 { width: 200px; height: 200px; animation: orbitRotate 8s linear infinite; }
+        .planet-1 { width: 15px; height: 15px; background: #8bc34a; top: -7px; left: 50%; box-shadow: 0 0 15px #8bc34a; }
+        .orbit-2 { width: 350px; height: 350px; animation: orbitRotate 15s linear infinite reverse; }
+        .planet-2 { width: 25px; height: 25px; background: var(--primary); bottom: -12px; left: 50%; box-shadow: 0 0 20px var(--primary); }
+        .orbit-3 { width: 500px; height: 500px; animation: orbitRotate 25s linear infinite; }
+        .planet-3 { width: 35px; height: 35px; background: var(--secondary); right: -17px; top: 50%; box-shadow: 0 0 25px var(--secondary); }
+
+        @keyframes orbitRotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Header & Intro */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--primary); }
+        .btn-exit { background: transparent; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
+        .btn-exit:hover { background: #ff3e3e; color: white; }
+
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .intro-box { text-align: center; margin-bottom: 50px; }
+        .intro-box h1 { font-family: 'Outfit', sans-serif; font-size: 36px; color: var(--gold); margin-bottom: 10px; }
+        .intro-box p { font-size: 16px; color: #ccc; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+        .highlight { color: var(--primary); font-weight: bold; }
+
+        /* Help Cards Grid */
+        .help-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        
+        .help-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 30px;
+            backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .help-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1); }
+        
+        .card-icon { font-size: 30px; color: var(--secondary); margin-bottom: 15px; }
+        .card-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 10px; color: white; }
+        .card-desc { font-size: 14px; line-height: 1.6; color: #bbb; margin-bottom: 25px; }
+        
+        .action-btn {
+            display: inline-block; padding: 10px 20px; background: var(--primary); color: black;
+            text-decoration: none; font-weight: bold; border-radius: 30px; text-align: center;
+            font-size: 14px; transition: 0.3s;
+        }
+        .action-btn:hover { filter: brightness(1.2); transform: scale(1.05); }
+
+        /* Support Button */
+        .whatsapp-float {
+            position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 65px; height: 65px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 35px; color: white; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer; z-index: 1000; transition: 0.3s;
+        }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg); }
+
+        footer { text-align: center; padding: 30px; font-size: 14px; opacity: 0.8; margin-top: 40px; border-top: 1px solid var(--glass); }
+        .heart { color: #ff3e3e; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg">
+        </div>
+
+    <div class="solar-system">
+        <div class="sun"></div>
+        <div class="orbit orbit-1"><div class="planet planet-1"></div></div>
+        <div class="orbit orbit-2"><div class="planet planet-2"></div></div>
+        <div class="orbit orbit-3"><div class="planet planet-3"></div></div>
+    </div>
+
+    <header>
+        <div class="logo"><i class="fas fa-question-circle"></i> SYSTEM HELP</div>
+        <a href="index.html" class="btn-exit"><i class="fas fa-sign-out-alt"></i> BACK TO HUB</a>
+    </header>
+
+    <div class="container">
+        <div class="intro-box">
+            <h1>Karibu Kwenye Mwongozo Wako, <span id="user-display" class="highlight">@user</span>!</h1>
+            <p>
+                Hapa ndipo unapopata maelezo kamili ya jinsi mfumo huu unavyofanya kazi. 
+                Nimekuandalia maelezo haya ili ujitambue, ujue nini cha kufanya, na uweze ku-enjoy kila kipengele cha hii Neural Hub. Chagua kitufe hapa chini kusoma maelezo na kwenda moja kwa moja kwenye huduma husika.
+            </p>
+        </div>
+
+        <div class="help-grid">
+            
+            <div class="help-card">
+                <div>
+                    <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                    <div class="card-title">💰 MONEY (Make Cash)</div>
+                    <div class="card-desc">
+                        Sikiliza <span class="user-name">@user</span>, hii ni sehemu ya kutengeneza mkate wa kila siku. Hapa utakutana na platforms za kweli kama <strong>26pesa, SproutGigs, na Exness</strong> zinazokulipa hadi TZS 120,000 kwa siku ukiwa serious. Kila website ina maelezo ya jinsi ya kutoa hela hadi kwenye M-Pesa.
+                    </div>
+                </div>
+                <a href="money.html" class="action-btn">GO TO MONEY HUB <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="help-card" style="border-color: rgba(255, 62, 62, 0.5);">
+                <div>
+                    <div class="card-icon" style="color: #ff3e3e;"><i class="fas fa-terminal"></i></div>
+                    <div class="card-title">💻 HACKING (Lumux Terminal)</div>
+                    <div class="card-desc">
+                        Hii ni kwa ajili ya kuwapa 'monkary' washkaji zako! <span class="user-name">@user</span>, hapa utaingia kwenye terminal ya kijasusi. Unaweza kuandika commands za ku-hack WiFi, kuongeza coins kwenye DLS, au kushusha GTA V. <strong>Kumbuka:</strong> Hii ni simulation tu ya uongo kwa ajili ya burudani!
+                    </div>
+                </div>
+                <a href="hack.html" class="action-btn" style="background: #ff3e3e; color: white;">ENTER TERMINAL <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="help-card">
+                <div>
+                    <div class="card-icon"><i class="fas fa-film"></i></div>
+                    <div class="card-title">🍿 MOVIES (Cinema)</div>
+                    <div class="card-desc">
+                        Unapenda zile drama kali za Kikorea na Kichina za mapenzi? Hapa <span class="user-name">@user</span> ndipo jumba lako la sinema lilipo. Utapata links za direct za kuangalia na kudownload series na movies kali unazozipenda bila usumbufu.
+                    </div>
+                </div>
+                <a href="movies.html" class="action-btn">GO TO MOVIES <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="help-card" style="border-color: var(--gold);">
+                <div>
+                    <div class="card-icon" style="color: var(--gold);"><i class="fas fa-heart"></i></div>
+                    <div class="card-title">📜 ADVISE (Words of Hope)</div>
+                    <div class="card-desc">
+                        Kama unajisikia kukata tamaa, gusa hapa. Utakutana na ujumbe mzito kutoka kwangu mimi Lupin Starnley Jimmoh kukupa moyo wewe <span class="user-name">@user</span>. Pia unaweza kuandika ushauri wako Live ili watumiaji wengine wasome na kupata matumaini.
+                    </div>
+                </div>
+                <a href="advise.html" class="action-btn" style="background: var(--gold);">READ ADVICE <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="help-card">
+                <div>
+                    <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="card-title">🎮 GAMES (Neural Arcade)</div>
+                    <div class="card-desc">
+                        Rafiki yangu <span class="user-name">@user</span>, hii ni sehemu ya kupunguza stress. Hapa utapata magemu 10 makubwa (kama Minecraft, Subway Surfers) ambayo unaweza kuyacheza moja kwa moja kwenye browser yako bila kudownload chochote.
+                    </div>
+                </div>
+                <a href="games.html" class="action-btn">PLAY GAMES <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="help-card">
+                <div>
+                    <div class="card-icon" style="color: #25d366;"><i class="fas fa-comments"></i></div>
+                    <div class="card-title">💬 CHAT (ThinkChat)</div>
+                    <div class="card-desc">
+                        Wasiliana na washkaji Live! Hii ni mfumo wa chat uliojengwa kwa CometChat SDK. <span class="user-name">@user</span>, hapa unaweza kutuma meseji kwa watumiaji wengine waliopo kwenye mfumo huu kama vile unavyotumia WhatsApp.
+                    </div>
+                </div>
+                <a href="chat.html" class="action-btn" style="background: #25d366; color: white;">OPEN CHAT <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="whatsapp-float" onclick="contactDeveloper()">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+
+    <footer>
+        Made with <span class="heart">❤️</span> in Tanzania | Developer: Lupin Starnley Jimmoh
+    </footer>
+
+    <script>
+        // Get Username
+        const username = localStorage.getItem('systemUser') || "Guest";
+        document.getElementById('user-display').innerText = username.toUpperCase();
+        document.querySelectorAll('.user-name').forEach(el => el.innerText = username.toUpperCase());
+
+        // 🌌 Generate Universe Details
+        const bg = document.getElementById('universe-bg');
+        
+        // Stars
+        for(let i=0; i<150; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 2 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(star);
+        }
+
+        // ☄️ Comets
+        setInterval(() => {
+            let comet = document.createElement('div');
+            comet.className = 'comet';
+            comet.style.left = Math.random() * 80 + 'vw';
+            comet.style.top = '-10vh';
+            bg.appendChild(comet);
+            setTimeout(() => comet.remove(), 8000);
+        }, 5000);
+
+        // 🪨 Asteroids
+        for(let j=0; j<5; j++) {
+            let ast = document.createElement('div');
+            ast.className = 'asteroid';
+            ast.style.left = Math.random() * -50 + 'px';
+            ast.style.top = Math.random() * 100 + 'vh';
+            ast.style.animationDuration = (Math.random() * 15 + 15) + 's';
+            ast.style.animationDelay = Math.random() * 10 + 's';
+            bg.appendChild(ast);
+        }
+
+        // WhatsApp Custom Function
+        function contactDeveloper() {
+            const phone = "255782754785";
+            const msg = `Hello Developer Lupin, it's me ${username.toUpperCase()}. I am currently on the System Guide (Help) page of the Neural Hub. I have a question and need your professional assistance.`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
