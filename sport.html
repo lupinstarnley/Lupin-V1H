@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN SPORT | LIVE NEURAL HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f0f0f0;
+            --text-muted: #a0a5b5;
+            --glow: 0 0 15px rgba(0, 229, 255, 0.4);
+            --neon-green: #25D366;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
+
+        /* UNIVERSE BACKGROUND */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .user-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--secondary); padding: 8px 20px; 
+            border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 700; color: white;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(176, 38, 255, 0.3);
+        }
+
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        .sport-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .tab-btn {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px 25px;
+            border-radius: 50px; color: white; cursor: pointer; transition: 0.3s; font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: var(--glow); border-color: var(--primary); }
+
+        #score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+        .score-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 20px; backdrop-filter: blur(15px); transition: 0.4s; position: relative;
+        }
+        .score-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--glow); }
+
+        .league-name { font-size: 10px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 1px; }
+        
+        .match-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .team { text-align: center; flex: 1; }
+        .team-name { font-size: 14px; font-weight: 700; color: #fff; }
+        
+        .score-display { font-size: 22px; font-weight: 900; font-family: 'Outfit'; flex: 1; text-align: center; color: var(--neon-green); }
+        
+        .match-status { display: block; text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .refresh-area { text-align: center; margin-top: 40px; }
+        .circle-refresh {
+            width: 60px; height: 60px; border-radius: 50%; background: var(--secondary);
+            border: none; color: white; font-size: 20px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(176, 38, 255, 0.4);
+        }
+        .circle-refresh:hover { transform: rotate(180deg) scale(1.1); }
+
+        .loader { grid-column: 1/-1; text-align: center; padding: 50px; color: var(--primary); font-family: 'Outfit'; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">LUPIN SPORT</div>
+        <div class="user-badge"><i class="fas fa-user-astronaut"></i> <span id="displayUser">LUPIN</span></div>
+    </header>
+
+    <div class="main-container">
+        <div class="sport-tabs">
+            <button class="tab-btn active" id="btn-foot" onclick="loadScores('football')"><i class="fas fa-futbol"></i> Football</button>
+            <button class="tab-btn" id="btn-cric" onclick="loadScores('cricket')"><i class="fas fa-baseball-bat-ball"></i> Cricket</button>
+        </div>
+
+        <div id="score-grid">
+            <div class="loader"><i class="fas fa-satellite fa-spin"></i> INITIALIZING NEURAL FEED...</div>
+        </div>
+
+        <div class="refresh-area">
+            <button class="circle-refresh" onclick="loadScores(currentType)" title="Refresh Scores"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Universe Engine
+        for (let i = 0; i < 100; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random()*2+'px'; star.style.height = star.style.width;
+            star.style.left = Math.random()*100+'vw'; star.style.top = Math.random()*100+'vh';
+            star.style.animationDuration = (Math.random()*3+1)+'s';
+            document.getElementById('universe-bg').appendChild(star);
+        }
+
+        const currentUser = localStorage.getItem('systemUser') || "Lupin Starnley";
+        document.getElementById('displayUser').innerText = currentUser.toUpperCase();
+
+        let currentType = 'football';
+
+        // THE UNSTOPPABLE SPORT API (RSS to JSON Bridge)
+        async function loadScores(type) {
+            currentType = type;
+            const grid = document.getElementById('score-grid');
+            grid.innerHTML = '<div class="loader"><i class="fas fa-broadcast-tower fa-spin"></i> SYNCING LIVE FEED...</div>';
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(type === 'football' ? 'btn-foot' : 'btn-cric').classList.add('active');
+
+            // Tunatumia RSS feed za ukweli (Goal.com & Cricbuzz) ambazo ni BURE milele
+            const feedUrl = type === 'football' 
+                ? 'https://www.goal.com/en/feeds/result-news' 
+                : 'https://www.cricbuzz.com/cricket-news/rss.xml';
+
+            try {
+                // RSS to JSON converter ya bure (Haina kikomo cha API Key)
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
+                const data = await response.json();
+                grid.innerHTML = '';
+
+                if(data.items && data.items.length > 0) {
+                    data.items.forEach(item => {
+                        // Kusafisha jina la mechi kutoka kwenye Title ya RSS
+                        let title = item.title;
+                        let parts = title.split(' - '); // Mara nyingi huwa "Team A 2-1 Team B"
+                        
+                        grid.innerHTML += `
+                            <div class="score-card">
+                                <span class="league-name">${type === 'football' ? 'GLOBAL FOOTBALL' : 'INTERNATIONAL CRICKET'}</span>
+                                <div class="match-box">
+                                    <div class="team">
+                                        <div class="team-name">${parts[0] || 'Match'}</div>
+                                    </div>
+                                    <div class="score-display">LIVE</div>
+                                    <div class="team">
+                                        <div class="team-name">${parts[1] || 'Update'}</div>
+                                    </div>
+                                </div>
+                                <div class="match-status">${item.pubDate}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    grid.innerHTML = '<div class="loader">No live matches in this sector right now.</div>';
+                }
+            } catch (error) {
+                grid.innerHTML = '<div class="loader" style="color:red">NEURAL SIGNAL LOST. PLEASE REFRESH.</div>';
+            }
+        }
+
+        window.onload = () => loadScores('football');
+    </script>
+</body>
+</html>
