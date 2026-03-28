@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN BET | DEEP SPACE SIGNALS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script defer src="https://widget-v4.cometchat.io/bundle.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --primary: #00ffcc;
+            --secondary: #ff0055;
+            --glass: rgba(10, 10, 15, 0.85);
+            --border: rgba(0, 255, 204, 0.15);
+            --neon-green: #00ff00;
+            --neon-red: #ff0000;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        
+        /* DEEP SPACE BACKGROUND */
+        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; position: relative; }
+        .space-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: radial-gradient(circle at bottom, #1b0033 0%, #000000 100%); }
+        .stars { width: 2px; height: 2px; background: white; position: absolute; border-radius: 50%; box-shadow: 10vw 20vh #fff, 40vw 80vh #fff, 80vw 10vh #fff, 20vw 50vh #fff, 90vw 90vh #fff, 50vw 30vh #fff, 70vw 60vh #fff, 10vw 90vh #fff, 90vw 40vh #fff, 30vw 10vh #fff; animation: moveStars 100s linear infinite; }
+        .stars2 { width: 3px; height: 3px; background: var(--primary); position: absolute; box-shadow: 15vw 25vh var(--primary), 45vw 85vh var(--primary), 85vw 15vh var(--primary), 25vw 55vh var(--primary), 95vw 95vh var(--primary); animation: moveStars 150s linear infinite; opacity: 0.5; }
+        
+        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-100vh); } }
+
+        /* MODAL */
+        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(20px); }
+        .modal-card { background: rgba(5,5,5,0.9); border: 2px solid var(--primary); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 50px rgba(0, 255, 204, 0.1); }
+
+        /* HEADER */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        .logo { font-family: 'Outfit'; font-size: 26px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .user-badge { background: rgba(0, 255, 204, 0.1); padding: 5px 15px; border-radius: 20px; font-weight: 900; color: var(--primary); font-size: 14px; border: 1px solid var(--primary); }
+
+        /* ADMIN PANEL */
+        #admin-panel { display: none; border: 1px solid var(--secondary); margin-bottom: 30px; background: rgba(255, 0, 85, 0.05); box-shadow: 0 0 30px rgba(255, 0, 85, 0.1); }
+        .input-box { background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; outline: none; font-family: 'Poppins'; }
+        .btn-send { background: linear-gradient(45deg, var(--secondary), #cc0044); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; margin-top: 10px; font-size: 16px; text-transform: uppercase; }
+
+        /* CARDS */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .bet-card { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); border-left: 4px solid var(--primary); }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .type-tag { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: white; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px currentColor; margin-right: 5px; }
+
+        /* STAKE INFO */
+        .stake-info { display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .stake-col { text-align: center; }
+        .stake-col span { display: block; font-size: 11px; opacity: 0.6; margin-bottom: 3px; }
+        .stake-col strong { font-family: 'Outfit'; font-size: 16px; color: var(--primary); }
+        .stake-col .return-val { color: var(--neon-green); }
+
+        .bookie-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .bookie-box { background: rgba(0,0,0,0.6); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid var(--border); }
+        .code-txt { font-family: 'Outfit'; font-size: 20px; font-weight: 900; margin-bottom: 15px; letter-spacing: 2px; }
+        
+        .btn-action { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 900; font-size: 12px; cursor: pointer; transition: 0.3s; color: white; background: rgba(255,255,255,0.1); border: 1px solid var(--border); }
+        .btn-action:hover { background: var(--primary); color: black; border-color: var(--primary); }
+
+        /* FLOATING ICONS */
+        .float-btn { position: fixed; bottom: 30px; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: black; font-size: 24px; transition: 0.3s; }
+        .music-btn { right: 30px; background: var(--primary); box-shadow: 0 0 20px var(--primary); }
+        .music-btn.playing { background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); animation: pulse 2s infinite; }
+        .wa-btn { left: 30px; background: #25D366; box-shadow: 0 0 20px #25D366; color: white; text-decoration: none; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="space-wrap">
+        <div class="stars" style="top: 10%; left: 20%;"></div>
+        <div class="stars2" style="top: 50%; left: 80%;"></div>
+        <div class="stars" style="top: 80%; left: 40%;"></div>
+        <div class="stars2" style="top: 30%; left: 10%;"></div>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="ageModal">
+        <div class="modal-card">
+            <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 50px; margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Outfit'; margin-bottom: 10px;">SYSTEM SECURED</h2>
+            <p style="font-size: 13px; opacity: 0.7; margin-bottom: 30px;">Deep space signals incoming. Confirm your clearance level.</p>
+            <button class="input-box" style="background: var(--primary); color: black; font-weight: 900; font-size: 16px; border:none;" onclick="verifySystem()">YES, I'M 18+ (ENTER)</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">LUPIN BET</div>
+        <div class="user-badge"><i class="fas fa-user-ninja"></i> <span id="userInfo">CONNECTING...</span></div>
+    </header>
+
+    <div class="container" style="max-width: 600px; margin: 30px auto; padding: 0 15px; padding-bottom: 100px;">
+        
+        <div id="admin-panel" class="glass-panel">
+            <h4 style="color: var(--secondary); margin-bottom: 15px; font-family: 'Outfit';"><i class="fas fa-terminal"></i> SHADOW COMMAND</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <select id="matchType" class="input-box">
+                    <option value="FIXED MATCH 💎">FIXED MATCH 💎</option>
+                    <option value="RANDOM MATCH 🎲">RANDOM MATCH 🎲</option>
+                </select>
+                <select id="matchStatus" class="input-box">
+                    <option value="ACTIVE">🟢 ACTIVE</option>
+                    <option value="EXPIRED">🔴 EXPIRED</option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="text" id="stakeAmt" placeholder="Stake e.g. 10,000/=" class="input-box">
+                <input type="text" id="returnAmt" placeholder="Return e.g. 250,000/=" class="input-box">
+            </div>
+            
+            <input type="text" id="pawaCode" placeholder="Betpawa Code" class="input-box">
+            <input type="text" id="sportyCode" placeholder="SportyBet Code" class="input-box">
+            
+            <button class="btn-send" onclick="sendSignal()"><i class="fas fa-paper-plane"></i> TRANSMIT SIGNAL</button>
+        </div>
+
+        <h5 style="opacity: 0.5; margin-bottom: 15px; font-size: 12px; letter-spacing: 2px;"><i class="fas fa-satellite-dish"></i> LIVE INTERCEPTIONS</h5>
+        
+        <div id="bet-feed">
+            <div class="loader" style="text-align: center; padding: 60px; opacity: 0.3;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; margin-bottom: 15px; color: var(--primary);"></i><br>
+                <span style="letter-spacing: 2px; font-size: 12px;">WAITING FOR SIGNALS...</span>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/255782754785" target="_blank" class="float-btn wa-btn"><i class="fab fa-whatsapp"></i></a>
+    <div class="float-btn music-btn" id="musicBtn" onclick="toggleMusic()"><i class="fas fa-music" id="musicIcon"></i></div>
+
+    <script>
+        const APP_ID = "1676976749d097e50"; 
+        const REGION = "us"; 
+        const AUTH_KEY = "518ddbb8a0ff8c4480eb7df1694a6ab8570daf40"; 
+        const GROUP_ID = "bet_oneway"; 
+        
+        let isReady = false;
+        let systemName = localStorage.getItem('systemUser') || "Guest_" + Math.floor(Math.random()*1000);
+        
+        // Jina ni SHADOW, tumia 'shadow'. Vinginevyo tengeneza UID safi.
+        let isShadow = (systemName.toUpperCase() === "SHADOW");
+        let systemUID = isShadow ? "shadow" : systemName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+        window.onload = () => {
+            let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+            CometChat.init(APP_ID, appSetting).then(() => { isReady = true; });
+        };
+
+        function verifySystem() {
+            if(!isReady) return alert("Establishing secure connection... Please wait.");
+            document.getElementById('ageModal').style.display = 'none';
+            document.getElementById('userInfo').innerText = systemName.toUpperCase();
+            if(isShadow) document.getElementById('admin-panel').style.display = 'block';
+            toggleMusic(true);
+            connectCometChat();
+        }
+
+        function connectCometChat() {
+            CometChat.login(systemUID, AUTH_KEY).then(user => { enterNetwork(); }, error => {
+                let newUser = new CometChat.User(systemUID);
+                newUser.setName(systemName.toUpperCase());
+                CometChat.createUser(newUser, AUTH_KEY).then(res => {
+                    CometChat.login(systemUID, AUTH_KEY).then(u => enterNetwork());
+                });
+            });
+        }
+
+        function enterNetwork() {
+            CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(res => startListening(), err => startListening());
+        }
+
+        function startListening() {
+            fetchSignals();
+            CometChat.addMessageListener("LUPIN_SYNC", new CometChat.MessageListener({
+                onCustomMessageReceived: msg => { if(msg.type === "shadow_bet") renderCard(msg.data.customData); }
+            }));
+        }
+
+        function fetchSignals() {
+            let req = new CometChat.MessagesRequestBuilder().setGUID(GROUP_ID).setLimit(20).setCategories(["custom"]).build();
+            req.fetchPrevious().then(msgs => {
+                document.getElementById('bet-feed').innerHTML = '';
+                if(msgs.length === 0) document.getElementById('bet-feed').innerHTML = '<div style="text-align:center; opacity:0.3; padding:40px;">NO ACTIVE SIGNALS</div>';
+                msgs.forEach(msg => { if(msg.type === "shadow_bet") renderCard(msg.data.customData); });
+            });
+        }
+
+        function sendSignal() {
+            const data = {
+                type: document.getElementById('matchType').value,
+                status: document.getElementById('matchStatus').value,
+                stake: document.getElementById('stakeAmt').value || "Any",
+                returns: document.getElementById('returnAmt').value || "Calculate...",
+                pawa: document.getElementById('pawaCode').value || "-",
+                sporty: document.getElementById('sportyCode').value || "-",
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            let customMessage = new CometChat.CustomMessage(GROUP_ID, CometChat.RECEIVER_TYPE.GROUP, "shadow_bet", data);
+            CometChat.sendCustomMessage(customMessage).then(msg => {
+                document.getElementById('pawaCode').value = '';
+                document.getElementById('sportyCode').value = '';
+                renderCard(data);
+            });
+        }
+
+        function renderCard(data) {
+            const feed = document.getElementById('bet-feed');
+            if(feed.innerHTML.includes('NO ACTIVE SIGNALS') || feed.querySelector('.loader')) feed.innerHTML = '';
+            
+            let statusColor = data.status === "ACTIVE" ? "var(--neon-green)" : "var(--neon-red)";
+            let statusHTML = `<span class="status-dot" style="color:${statusColor};"></span><span style="color:${statusColor}; font-size:12px; font-weight:900;">${data.status}</span>`;
+
+            const card = `
+                <div class="glass-panel bet-card">
+                    <div class="header-row">
+                        <div>
+                            <div class="type-tag">${data.type}</div>
+                            <div class="time-tag"><i class="far fa-clock"></i> ${data.time}</div>
+                        </div>
+                        <div>${statusHTML}</div>
+                    </div>
+                    
+                    <div class="stake-info">
+                        <div class="stake-col"><span>RECOMMENDED STAKE</span><strong>${data.stake}</strong></div>
+                        <div class="stake-col" style="text-align:right;"><span>EXPECTED RETURN</span><strong class="return-val">${data.returns}</strong></div>
+                    </div>
+
+                    <div class="bookie-section">
+                        <div class="bookie-box">
+                            <div class="bookie-title" style="color:var(--primary);">BETPAWA</div>
+                            <div class="code-txt">${data.pawa}</div>
+                            <button class="btn-action" onclick="copyAndOpen('${data.pawa}', 'https://www.betpawa.co.tz', this)"><i class="fas fa-copy"></i> COPY & OPEN</button>
+                        </div>
+                        <div class="bookie-box">
+                            <div class="bookie-title" style="color:#e61919;">SPORTYBET</div>
+                            <div class="code-txt">${data.sporty}</div>
+                            <button class="btn-action" onclick="copyAndOpen('${data.sporty}', 'https://www.sportybet.com/tz', this)"><i class="fas fa-copy"></i> COPY & OPEN</button>
+                        </div>
+                    </div>
+                </div>`;
+            feed.insertAdjacentHTML('afterbegin', card);
+        }
+
+        function copyAndOpen(text, link, btn) {
+            if(text === "-") return;
+            navigator.clipboard.writeText(text);
+            let originalText = btn.innerHTML;
+            btn.innerHTML = "<i class='fas fa-check'></i> COPIED!";
+            btn.style.background = "var(--neon-green)";
+            btn.style.color = "black";
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = "rgba(255,255,255,0.1)";
+                btn.style.color = "white";
+                window.open(link, '_blank');
+            }, 1000);
+        }
+
+        let playing = false;
+        function toggleMusic(forcePlay = false) {
+            const song = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            const icon = document.getElementById('musicIcon');
+            if(!playing || forcePlay) {
+                song.play().catch(e => {});
+                btn.classList.add('playing');
+                icon.className = "fas fa-volume-up";
+                playing = true;
+            } else {
+                song.pause();
+                btn.classList.remove('playing');
+                icon.className = "fas fa-volume-mute";
+                playing = false;
+            }
+        }
+    </script>
+</body>
+</html>
