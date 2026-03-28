@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN SPORT | NEURAL DATA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00ff88; /* Rangi ya kiwanja */
+            --secondary: #00e5ff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f0f0f0;
+            --neon: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #0a1a12 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        header {
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* SCORE GRID */
+        #score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+        .match-card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px;
+            padding: 20px; backdrop-filter: blur(15px); transition: 0.4s; position: relative;
+        }
+        .match-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--neon); }
+
+        .league-header { font-size: 10px; color: var(--primary); font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        
+        .match-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .team { text-align: center; flex: 1; }
+        .team img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 13px; font-weight: 700; color: #fff; }
+        
+        .score-box { flex: 1; text-align: center; }
+        .score-text { font-size: 26px; font-weight: 900; color: var(--primary); font-family: 'Outfit'; }
+        .time-text { font-size: 11px; color: #888; display: block; }
+        
+        .match-info { font-size: 11px; text-align: center; color: #aaa; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; }
+
+        .loader { grid-column: 1/-1; text-align: center; padding: 50px; color: var(--primary); font-family: 'Outfit'; font-weight: 900; }
+        .refresh-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); border: none; color: #000; font-size: 22px; cursor: pointer; box-shadow: var(--neon); position: fixed; bottom: 30px; right: 30px; transition: 0.3s; z-index: 500; }
+        .refresh-btn:hover { transform: rotate(180deg); }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <header>
+        <div class="logo">LUPIN SPORT</div>
+        <div style="color: var(--primary); font-size: 12px; font-weight: 900;"><i class="fas fa-satellite-dish"></i> DATA ENGINE: ON</div>
+    </header>
+
+    <div class="main-container">
+        <div id="score-grid">
+            <div class="loader"><i class="fas fa-spinner fa-spin"></i> SYNCING LIVE FIXTURES...</div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="fetchMatches()"><i class="fas fa-sync"></i></button>
+
+    <script>
+        // Universe Background
+        for (let i = 0; i < 80; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random()*2+'px'; star.style.height = star.style.width;
+            star.style.left = Math.random()*100+'vw'; star.style.top = Math.random()*100+'vh';
+            star.style.animationDuration = (Math.random()*3+1)+'s';
+            document.getElementById('universe-bg').appendChild(star);
+        }
+
+        // --- HAPA NIMEWEKA API KEY YAKO MPYA ---
+        const FOOTBALL_API_KEY = 'a47fca155563e5a35dbef6569c551ca8';
+        const today = new Date().toISOString().split('T')[0]; // Inatafuta tarehe ya leo: 2026-03-28
+
+        async function fetchMatches() {
+            const grid = document.getElementById('score-grid');
+            grid.innerHTML = '<div class="loader"><i class="fas fa-futbol fa-spin"></i> LOADING TODAY\'S MATCHES...</div>';
+
+            try {
+                const response = await fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
+                    "method": "GET",
+                    "headers": {
+                        "x-rapidapi-host": "v3.football.api-sports.io",
+                        "x-rapidapi-key": FOOTBALL_API_KEY
+                    }
+                });
+
+                const data = await response.json();
+                grid.innerHTML = '';
+
+                if (data.response.length === 0) {
+                    grid.innerHTML = '<div class="loader">Hakuna mechi zilizopangwa kwa leo.</div>';
+                    return;
+                }
+
+                data.response.slice(0, 30).forEach(match => { // Tunachukua mechi 30 za kwanza
+                    const status = match.fixture.status.short;
+                    const homeScore = match.goals.home !== null ? match.goals.home : '-';
+                    const awayScore = match.goals.away !== null ? match.goals.away : '-';
+
+                    grid.innerHTML += `
+                        <div class="match-card">
+                            <div class="league-header">${match.league.name} - ${match.league.country}</div>
+                            <div class="match-main">
+                                <div class="team">
+                                    <img src="${match.teams.home.logo}" alt="team">
+                                    <div class="team-name">${match.teams.home.name}</div>
+                                </div>
+                                <div class="score-box">
+                                    <span class="score-text">${homeScore} : ${awayScore}</span>
+                                    <span class="time-text">${match.fixture.status.long}</span>
+                                </div>
+                                <div class="team">
+                                    <img src="${match.teams.away.logo}" alt="team">
+                                    <div class="team-name">${match.teams.away.name}</div>
+                                </div>
+                            </div>
+                            <div class="match-info">
+                                <i class="far fa-clock"></i> ${new Date(match.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${match.fixture.venue.name}
+                            </div>
+                        </div>`;
+                });
+            } catch (error) {
+                grid.innerHTML = '<div class="loader" style="color:red">CONNECTION ERROR. PLEASE CHECK YOUR API KEY QUOTA.</div>';
+            }
+        }
+
+        window.onload = fetchMatches;
+    </script>
+</body>
+</html>
