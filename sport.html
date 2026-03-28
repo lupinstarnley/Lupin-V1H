@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN SPORT | LIVE NEURAL HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f0f0f0;
+            --text-muted: #a0a5b5;
+            --glow: 0 0 15px rgba(0, 229, 255, 0.4);
+            --neon-green: #25D366;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
+
+        /* UNIVERSE BACKGROUND */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #0a061a 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.7); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .user-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--secondary); padding: 8px 20px; 
+            border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 700; color: white;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(176, 38, 255, 0.3);
+        }
+
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* TABS PARA SPORT SELECTION */
+        .sport-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .tab-btn {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px 25px;
+            border-radius: 50px; color: white; cursor: pointer; transition: 0.3s; font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: var(--glow); border-color: var(--primary); }
+
+        /* SCORE GRID */
+        #score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+        .score-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 20px; backdrop-filter: blur(15px); transition: 0.4s; position: relative;
+            overflow: hidden;
+        }
+        .score-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--glow); }
+
+        .league-name { font-size: 11px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 15px; display: block; }
+        
+        .match-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .team { text-align: center; flex: 1; }
+        .team img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 14px; font-weight: 600; }
+        
+        .score-display { font-size: 24px; font-weight: 900; font-family: 'Outfit'; flex: 1; text-align: center; color: var(--neon-green); text-shadow: 0 0 10px rgba(37, 211, 102, 0.4); }
+        
+        .match-status { text-align: center; font-size: 11px; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 20px; display: inline-block; }
+        .status-live { color: #ff4b2b; animation: pulse 1.5s infinite; font-weight: bold; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* REFRESH CIRCLE BUTTON */
+        .refresh-area { text-align: center; margin-top: 30px; }
+        .circle-refresh {
+            width: 60px; height: 60px; border-radius: 50%; background: var(--secondary);
+            border: none; color: white; font-size: 20px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(176, 38, 255, 0.4);
+        }
+        .circle-refresh:hover { transform: rotate(180deg) scale(1.1); }
+
+        .loader { grid-column: 1/-1; text-align: center; padding: 50px; color: var(--primary); font-family: 'Outfit'; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">LUPIN SPORT</div>
+        <div class="user-badge"><i class="fas fa-user-astronaut"></i> <span id="displayUser">GUEST</span></div>
+    </header>
+
+    <div class="main-container">
+        <div class="sport-tabs">
+            <button class="tab-btn active" onclick="loadScores('football')"><i class="fas fa-futbol"></i> Football</button>
+            <button class="tab-btn" onclick="loadScores('cricket')"><i class="fas fa-baseball-bat-ball"></i> Cricket</button>
+        </div>
+
+        <div id="score-grid">
+            <div class="loader"><i class="fas fa-satellite fa-spin"></i> CONNECTING TO STADIUMS...</div>
+        </div>
+
+        <div class="refresh-area">
+            <button class="circle-refresh" onclick="location.reload()" title="Refresh Scores"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Star Generator
+        function generateStars() {
+            const space = document.getElementById('universe-bg');
+            for (let i = 0; i < 100; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                let size = Math.random() * 2;
+                star.style.width = size + 'px'; star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                space.appendChild(star);
+            }
+        }
+        generateStars();
+
+        // User Identity
+        const currentUser = localStorage.getItem('systemUser') || "Guest";
+        document.getElementById('displayUser').innerText = currentUser.toUpperCase();
+
+        // API Configuration
+        const apiKey = 'aeda0d80dcmsh4d45373c74ce2a6p11ba49jsn06dc12a7f7e9';
+
+        async function loadScores(type) {
+            const grid = document.getElementById('score-grid');
+            grid.innerHTML = '<div class="loader"><i class="fas fa-broadcast-tower fa-spin"></i> FETCHING LIVE DATA...</div>';
+            
+            // Update Tab Active State
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event?.currentTarget?.classList.add('active');
+
+            let url = '';
+            let host = '';
+
+            if(type === 'football') {
+                url = 'https://football-live-scores-and-schedules.p.rapidapi.com/livescore';
+                host = 'football-live-scores-and-schedules.p.rapidapi.com';
+            } else {
+                url = 'https://cricbuzz-cricket.p.rapidapi.com/matches/v1/recent';
+                host = 'cricbuzz-cricket.p.rapidapi.com';
+            }
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'x-rapidapi-key': apiKey, 'x-rapidapi-host': host }
+                });
+                const data = await response.json();
+                grid.innerHTML = '';
+
+                if(type === 'football') {
+                    // Logic ya Football (Inategemea na data structure ya API)
+                    data.data.forEach(match => {
+                        grid.innerHTML += `
+                            <div class="score-card">
+                                <span class="league-name">${match.league_name}</span>
+                                <div class="match-box">
+                                    <div class="team">
+                                        <div class="team-name">${match.home_team_name}</div>
+                                    </div>
+                                    <div class="score-display">${match.home_score} - ${match.away_score}</div>
+                                    <div class="team">
+                                        <div class="team-name">${match.away_team_name}</div>
+                                    </div>
+                                </div>
+                                <div style="text-align:center">
+                                    <span class="match-status ${match.status === 'LIVE' ? 'status-live' : ''}">${match.status}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Logic ya Cricket
+                    data.typeMatches.forEach(t => {
+                        t.seriesMatches.forEach(s => {
+                            if(s.seriesAdWrapper) {
+                                s.seriesAdWrapper.matches.forEach(m => {
+                                    grid.innerHTML += `
+                                        <div class="score-card">
+                                            <span class="league-name">${s.seriesAdWrapper.seriesName}</span>
+                                            <div class="match-box">
+                                                <div class="team">
+                                                    <div class="team-name">${m.matchInfo.team1.teamName}</div>
+                                                </div>
+                                                <div class="score-display">VS</div>
+                                                <div class="team">
+                                                    <div class="team-name">${m.matchInfo.team2.teamName}</div>
+                                                </div>
+                                            </div>
+                                            <div style="text-align:center">
+                                                <span class="match-status">${m.matchInfo.status}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            }
+                        });
+                    });
+                }
+            } catch (error) {
+                grid.innerHTML = '<div class="loader" style="color:red">NEURAL SIGNAL LOST. PLEASE REFRESH.</div>';
+            }
+        }
+
+        window.onload = () => loadScores('football');
+    </script>
+</body>
+</html>
