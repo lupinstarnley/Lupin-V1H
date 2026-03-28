@@ -20,44 +20,29 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; }
 
-        /* UNIVERSE BACKGROUND */
         #space { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; background: radial-gradient(circle at center, #0a0a20 0%, #02020a 100%); }
         .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; }
-        
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         /* AGE MODAL */
-        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(15px); }
-        .modal-card { background: var(--glass); border: 2px solid var(--border); border-radius: 30px; padding: 40px; text-align: center; max-width: 400px; width: 90%; }
+        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(20px); }
+        .modal-card { background: var(--glass); border: 2px solid var(--border); border-radius: 30px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); }
 
-        /* HEADER */
         header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
         .logo { font-family: 'Outfit'; font-size: 26px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* ADMIN TERMINAL */
         #admin-panel { display: none; border: 2px solid var(--secondary); margin-bottom: 30px; background: rgba(255, 0, 127, 0.03); }
         .input-box { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 15px; width: 100%; margin: 10px 0; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
-        .btn-send { background: var(--secondary); color: white; border: none; padding: 16px; border-radius: 50px; width: 100%; font-weight: 900; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 20px var(--secondary); }
+        .btn-send { background: var(--secondary); color: white; border: none; padding: 16px; border-radius: 50px; width: 100%; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-        /* SIGNAL CARDS */
         .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 25px; padding: 25px; margin-bottom: 20px; }
-        .bet-card { position: relative; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .bet-card { position: relative; animation: slideUp 0.6s ease; }
         .type-tag { position: absolute; top: -10px; right: 20px; background: var(--primary); color: black; padding: 6px 15px; border-radius: 20px; font-weight: 900; font-size: 11px; }
-        .code-display { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; margin: 10px 0; border: 1px dashed var(--primary); transition: 0.3s; }
-        .code-display:hover { background: rgba(0, 229, 255, 0.1); }
+        .code-display { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; margin: 10px 0; border: 1px dashed var(--primary); }
         
-        .win-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; font-weight: 900; }
-        
-        .redirect-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .r-btn { padding: 12px; border-radius: 50px; text-decoration: none; text-align: center; font-size: 12px; font-weight: 900; color: white; }
-        .bp-bg { background: #000; border: 1px solid var(--neon-green); } 
-        .sy-bg { background: #e61919; }
-
-        /* AVIATOR BUTTON */
-        .aviator-btn { position: fixed; bottom: 25px; right: 25px; width: 65px; height: 65px; background: #e61919; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px #e61919; z-index: 1000; transition: 0.4s; }
-        .aviator-btn.active { background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); transform: rotate(15deg) scale(1.1); }
-        .aviator-btn i { font-size: 26px; color: white; }
+        /* MUSIC TOGGLE BUTTON */
+        .music-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px var(--secondary); z-index: 1000; transition: 0.3s; }
+        .music-btn.playing { background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -65,18 +50,18 @@
 <body>
 
     <div id="space"></div>
-    <audio id="aviatorSfx" loop preload="auto">
+    <audio id="aviatorSong" loop preload="auto">
         <source src="https://www.soundboard.com/handler/Downloadaudio.ashx?id=336214" type="audio/mpeg">
     </audio>
 
     <div id="ageModal">
         <div class="modal-card">
-            <i class="fas fa-user-shield" style="color: var(--primary); font-size: 45px; margin-bottom: 20px;"></i>
-            <h2>IDENTITY CHECK</h2>
-            <p style="font-size: 14px; opacity: 0.7;">This terminal is strictly for 18+ members.</p>
-            <div style="display: flex; gap: 15px; margin-top: 30px;">
-                <button class="input-box" style="background: var(--primary); color: black; font-weight: 900; margin:0;" onclick="verifyAge()">CONFIRM 18+</button>
-                <button class="input-box" style="background: transparent; border: 1px solid var(--secondary); margin:0;" onclick="window.location.href='index.html'">EXIT</button>
+            <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 50px; margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Outfit';">AGE VERIFICATION</h2>
+            <p style="font-size: 14px; opacity: 0.7; margin-bottom: 30px;">Are you 18 years or older to access Lupin Bet signals?</p>
+            <div style="display: flex; gap: 15px;">
+                <button class="input-box" style="background: var(--primary); color: black; font-weight: 900; margin:0;" onclick="verifyAge(true)">YES, ENTER</button>
+                <button class="input-box" style="background: transparent; border: 1px solid var(--secondary); margin:0;" onclick="window.location.href='index.html'">NO, EXIT</button>
             </div>
         </div>
     </div>
@@ -89,34 +74,28 @@
     <div class="container" style="max-width: 500px; margin: 25px auto; padding: 0 15px;">
         
         <div id="admin-panel" class="glass-panel">
-            <h4 style="color: var(--secondary); margin-bottom: 15px;"><i class="fas fa-terminal"></i> SHADOW COMMAND CENTER</h4>
-            <select id="matchType" class="input-box">
-                <option value="FIXED MATCH 💎">FIXED MATCH 💎</option>
-                <option value="PREMIUM SIGNAL">PREMIUM SIGNAL</option>
-                <option value="DAILY FREE">DAILY FREE</option>
-            </select>
+            <h4 style="color: var(--secondary); margin-bottom: 15px;"><i class="fas fa-user-secret"></i> SHADOW PANEL</h4>
             <input type="text" id="pawaCode" placeholder="Betpawa Code" class="input-box">
             <input type="text" id="sportyCode" placeholder="SportyBet Code" class="input-box">
-            <input type="number" id="stakeAmount" placeholder="Stake Amount (TZS)" class="input-box">
-            <button class="btn-send" onclick="sendSignal()">BROADCAST SIGNAL</button>
+            <input type="number" id="stakeAmount" placeholder="Stake Amount" class="input-box">
+            <button class="btn-send" onclick="sendSignal()">BROADCAST NOW</button>
         </div>
 
-        <h5 style="opacity: 0.4; margin-bottom: 15px; font-size: 12px; letter-spacing: 1px;"><i class="fas fa-bolt"></i> LIVE SIGNAL STREAM</h5>
+        <h5 style="opacity: 0.4; margin-bottom: 15px; font-size: 11px;"><i class="fas fa-wifi"></i> ENCRYPTED SIGNAL FEED</h5>
         
         <div id="bet-feed">
-            <div class="loader" style="text-align: center; padding: 60px; opacity: 0.3;">
-                <i class="fas fa-satellite-dish fa-spin" style="font-size: 35px; margin-bottom: 15px;"></i><br>
-                WAITING FOR SIGNALS...
+            <div class="loader" style="text-align: center; padding: 50px; opacity: 0.3;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 30px; margin-bottom: 15px;"></i><br>
+                CONNECTING TO NEURAL LINK...
             </div>
         </div>
     </div>
 
-    <div class="aviator-btn" id="aviatorBtn" onclick="toggleAviator()">
-        <i class="fas fa-plane"></i>
+    <div class="music-btn" id="musicBtn" onclick="toggleMusic()">
+        <i class="fas fa-music" id="musicIcon"></i>
     </div>
 
     <script>
-        // CONFIG - CHANGE ONLY IF NEEDED
         const APP_ID = "21151475704618df"; 
         const REGION = "us"; 
         const AUTH_KEY = "6f0490333289052601990c884699564619969"; 
@@ -125,121 +104,128 @@
 
         // INIT STARS
         const space = document.getElementById('space');
-        for(let i=0; i<80; i++) {
+        for(let i=0; i<60; i++) {
             let s = document.createElement('div'); s.className='star';
             s.style.width='2px'; s.style.height='2px';
             s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
             space.appendChild(s);
         }
 
-        // VERIFY AGE & ACCESS
         function verifyAge() {
             document.getElementById('ageModal').style.display = 'none';
             document.getElementById('userInfo').innerText = currentUser.toUpperCase();
             
-            // Angalia kama ni SHADOW kufungua Admin Panel
+            // START MUSIC IMMEDIATELY
+            toggleMusic(true);
+
             if(currentUser.toUpperCase() === "SHADOW") {
                 document.getElementById('admin-panel').style.display = 'block';
             }
             initCometChat();
         }
 
-        // COMETCHAT LOGIC
         function initCometChat() {
             let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
             CometChat.init(APP_ID, appSetting).then(() => {
                 CometChat.login(currentUser, AUTH_KEY).then(user => {
-                    console.log("CometChat: Neural Link Established");
+                    console.log("Login Success");
                     
-                    // Listener ya kupokea ujumbe
-                    CometChat.addMessageListener("SIGNAL_LISTENER", new CometChat.MessageListener({
-                        onCustomMessageReceived: customMessage => {
-                            if(customMessage.type === "bet_signal") {
-                                displaySignal(customMessage.data.customData);
-                            }
+                    // AUTOMATICALLY JOIN GROUP (SILENTLY)
+                    CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(
+                        res => {
+                            console.log("Joined Secret Group");
+                            fetchHistory(); // Pakua signals za zamani
+                        },
+                        err => { fetchHistory(); } // Tayari ni member
+                    );
+
+                    // LISTEN FOR LIVE SIGNALS
+                    CometChat.addMessageListener("LUPIN_LISTENER", new CometChat.MessageListener({
+                        onCustomMessageReceived: msg => {
+                            if(msg.type === "bet_signal") displaySignal(msg.data.customData);
                         }
                     }));
                 });
             });
         }
 
-        // SEND SIGNAL (ADMIN)
+        function fetchHistory() {
+            let limit = 20;
+            let messagesRequest = new CometChat.MessagesRequestBuilder()
+                .setGUID(GROUP_ID)
+                .setLimit(limit)
+                .setCategories(["custom"])
+                .build();
+
+            messagesRequest.fetchPrevious().then(messages => {
+                document.getElementById('bet-feed').innerHTML = '';
+                messages.forEach(msg => {
+                    if(msg.type === "bet_signal") displaySignal(msg.data.customData);
+                });
+            });
+        }
+
         function sendSignal() {
             const data = {
-                type: document.getElementById('matchType').value,
-                pawa: document.getElementById('pawaCode').value || "NO-CODE",
-                sporty: document.getElementById('sportyCode').value || "NO-CODE",
+                pawa: document.getElementById('pawaCode').value || "TBA",
+                sporty: document.getElementById('sportyCode').value || "TBA",
                 stake: document.getElementById('stakeAmount').value || "0",
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
             let customMessage = new CometChat.CustomMessage(GROUP_ID, CometChat.RECEIVER_TYPE.GROUP, "bet_signal", data);
-
             CometChat.sendCustomMessage(customMessage).then(msg => {
-                alert("SUCCESS: Signal is now LIVE!");
-                displaySignal(data); // Preview kwa Admin
-            }, err => {
-                alert("FAILED: Hakikisha Group GUID 'lupin_bet_signals' lipo CometChat!");
+                alert("SIGNAL BROADCASTED!");
+                displaySignal(data);
             });
         }
 
-        // UI DISPLAY
         function displaySignal(data) {
             const feed = document.getElementById('bet-feed');
-            if(feed.querySelector('.loader')) feed.innerHTML = '';
-            
             const pWin = (parseFloat(data.stake) * 3.45).toLocaleString();
             const sWin = (parseFloat(data.stake) * 3.75).toLocaleString();
 
             const card = `
                 <div class="glass-panel bet-card">
-                    <span class="type-tag">${data.type}</span>
-                    <div style="font-size: 10px; opacity: 0.5; margin-bottom: 10px;">RECEIVED AT ${data.time}</div>
-                    
+                    <span class="type-tag">LIVE SIGNAL</span>
+                    <div style="font-size: 10px; opacity: 0.5; margin-bottom: 12px;">TIMESTAMP: ${data.time}</div>
                     <div class="code-display" onclick="copyCode('${data.pawa}', this)">
-                        <small style="color:var(--primary); font-weight:900;">BETPAWA</small><br>
-                        <strong>${data.pawa}</strong>
+                        <small style="color:var(--primary)">BETPAWA CODE</small><br><strong>${data.pawa}</strong>
                     </div>
-
                     <div class="code-display" onclick="copyCode('${data.sporty}', this)">
-                        <small style="color:var(--secondary); font-weight:900;">SPORTYBET</small><br>
-                        <strong>${data.sporty}</strong>
+                        <small style="color:var(--secondary)">SPORTYBET CODE</small><br><strong>${data.sporty}</strong>
                     </div>
-
-                    <div class="win-row">
-                        <span style="color: var(--neon-green)">PAWA EST: TZS ${pWin}</span>
-                        <span style="color: #f1c40f">SPORTY EST: TZS ${sWin}</span>
+                    <div style="display:flex; justify-content:space-between; font-weight:900; font-size:12px; margin-top:10px;">
+                        <span style="color: var(--neon-green)">PAWA: TZS ${pWin}</span>
+                        <span style="color: #f1c40f">SPORTY: TZS ${sWin}</span>
                     </div>
-
-                    <div class="redirect-btns">
-                        <a href="https://www.betpawa.co.tz" target="_blank" class="r-btn bp-bg">OPEN PAWA</a>
-                        <a href="https://www.sportybet.com/tz" target="_blank" class="r-btn sy-bg">OPEN SPORTY</a>
-                    </div>
-                </div>
-            `;
+                </div>`;
             feed.insertAdjacentHTML('afterbegin', card);
         }
 
         function copyCode(text, el) {
             navigator.clipboard.writeText(text);
-            const original = el.innerHTML;
-            el.innerHTML = "<strong style='color:var(--neon-green)'>COPIED!</strong>";
-            setTimeout(() => el.innerHTML = original, 1200);
+            el.style.borderColor = "var(--neon-green)";
+            setTimeout(() => el.style.borderColor = "var(--primary)", 1000);
         }
 
-        // AVIATOR TOGGLE
-        let isPlaying = false;
-        function toggleAviator() {
-            const sound = document.getElementById('aviatorSfx');
-            const btn = document.getElementById('aviatorBtn');
-            if(!isPlaying) {
-                sound.play().catch(e => console.log("Audio block by browser"));
-                btn.classList.add('active');
-                isPlaying = true;
+        // MUSIC CONTROL SYSTEM
+        let playing = false;
+        function toggleMusic(forcePlay = false) {
+            const song = document.getElementById('aviatorSong');
+            const btn = document.getElementById('musicBtn');
+            const icon = document.getElementById('musicIcon');
+
+            if(!playing || forcePlay) {
+                song.play();
+                btn.classList.add('playing');
+                icon.className = "fas fa-volume-up";
+                playing = true;
             } else {
-                sound.pause();
-                btn.classList.remove('active');
-                isPlaying = false;
+                song.pause();
+                btn.classList.remove('playing');
+                icon.className = "fas fa-volume-mute";
+                playing = false;
             }
         }
     </script>
