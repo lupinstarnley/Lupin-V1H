@@ -140,26 +140,27 @@
         const REGION = "us"; 
         const AUTH_KEY = "518ddbb8a0ff8c4480eb7df1694a6ab8570daf40"; 
         const GROUP_ID = "bet_oneway"; 
-        const SHADOW_UID = "bet_123"; // Hii ndio UID ya admin
+        const SHADOW_UID = "bet_123"; 
         
-        // Chukua jina alilologin nalo (Kama hakuna, mpe 'guest_user')
         const currentUser = localStorage.getItem('systemUser') || "guest_" + Math.floor(Math.random()*1000);
+        const currentUID = localStorage.getItem('systemUID') || "";
 
         function verifyAge() {
             document.getElementById('ageModal').style.display = 'none';
             
-            // Set jina kule juu. Kama ni bet_123, andika SHADOW. Vinginevyo andika jina lake.
-            let displayName = (currentUser === SHADOW_UID) ? "SHADOW" : currentUser.toUpperCase();
-            document.getElementById('userInfo').innerText = displayName;
-            
-            // Anzisha wimbo
+            // 1. Ianzishe Mziki
             toggleMusic(true);
 
-            // Fungua Admin Panel kama ni SHADOW pekee
-            if(currentUser === SHADOW_UID) {
+            // 2. Kagua Admin Status
+            const isAdmin = (currentUser.toUpperCase() === "SHADOW" || currentUID === SHADOW_UID);
+            let displayName = isAdmin ? "SHADOW" : currentUser.toUpperCase();
+            document.getElementById('userInfo').innerText = displayName;
+
+            if(isAdmin) {
                 document.getElementById('admin-panel').style.display = 'block';
             }
             
+            // 3. Imuunge kwenye Group papo hapo
             initCometChat();
         }
 
@@ -167,41 +168,48 @@
             let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
             CometChat.init(APP_ID, appSetting).then(() => {
                 
-                // Tunatengeneza user on-the-fly kama hayupo ili asikwame (Kama sio Shadow)
-                let user = new CometChat.User(currentUser);
-                user.setName(currentUser);
-                CometChat.createUser(user, AUTH_KEY).then(
-                    user => { proceedLogin(); },
-                    error => { proceedLogin(); } // User already exists, proceed to login
-                );
+                let loginID = (currentUID === SHADOW_UID) ? SHADOW_UID : currentUser;
 
+                CometChat.login(loginID, AUTH_KEY).then(user => {
+                    console.log("Logged in successfully");
+                    joinShadowGroup();
+                }, error => {
+                    // Kama user hayupo, mtengeneze kisha login
+                    let newUser = new CometChat.User(loginID);
+                    newUser.setName(loginID);
+                    CometChat.createUser(newUser, AUTH_KEY).then(res => {
+                        CometChat.login(loginID, AUTH_KEY).then(u => joinShadowGroup());
+                    });
+                });
             });
         }
 
-        function proceedLogin() {
-            CometChat.login(currentUser, AUTH_KEY).then(user => {
-                console.log("System Online");
-                
-                // AUTO JOIN GROUP (KIMYAKIMYA)
-                CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(
-                    success => { fetchHistory(); },
-                    error => { fetchHistory(); } // Tayari yupo
-                );
+        function joinShadowGroup() {
+            CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(
+                success => { 
+                    fetchHistory();
+                    listenForSignals();
+                },
+                error => { 
+                    fetchHistory(); 
+                    listenForSignals();
+                } 
+            );
+        }
 
-                // SIKILIZA MESSAGES MPYA LIVE
-                CometChat.addMessageListener("SHADOW_LISTENER", new CometChat.MessageListener({
-                    onCustomMessageReceived: msg => {
-                        if(msg.type === "bet_signal") displaySignal(msg.data.customData);
-                    }
-                }));
-            });
+        function listenForSignals() {
+            CometChat.addMessageListener("SHADOW_LISTENER", new CometChat.MessageListener({
+                onCustomMessageReceived: msg => {
+                    if(msg.type === "bet_signal") displaySignal(msg.data.customData);
+                }
+            }));
         }
 
         function fetchHistory() {
             let limit = 30;
             let messagesRequest = new CometChat.MessagesRequestBuilder().setGUID(GROUP_ID).setLimit(limit).setCategories(["custom"]).build();
             messagesRequest.fetchPrevious().then(messages => {
-                document.getElementById('bet-feed').innerHTML = ''; // Safisha loader
+                document.getElementById('bet-feed').innerHTML = '';
                 if(messages.length === 0) {
                     document.getElementById('bet-feed').innerHTML = '<div style="text-align:center; opacity:0.3; padding:30px;">NO SIGNALS YET</div>';
                 }
@@ -223,7 +231,6 @@
             let customMessage = new CometChat.CustomMessage(GROUP_ID, CometChat.RECEIVER_TYPE.GROUP, "bet_signal", data);
             
             CometChat.sendCustomMessage(customMessage).then(msg => {
-                // Clear inputs baada ya kutuma
                 document.getElementById('pawaCode').value = '';
                 document.getElementById('sportyCode').value = '';
                 displaySignal(data);
@@ -234,13 +241,9 @@
             const feed = document.getElementById('bet-feed');
             if(feed.querySelector('.loader') || feed.innerHTML.includes('NO SIGNALS')) feed.innerHTML = '';
             
-            // Check Status Color
-            let statusHTML = '';
-            if(data.status === "ACTIVE") {
-                statusHTML = `<span class="status-dot status-active"></span> <span style="color:var(--neon-green); font-size:12px; font-weight:900;">ACTIVE</span>`;
-            } else {
-                statusHTML = `<span class="status-dot status-expired"></span> <span style="color:var(--neon-red); font-size:12px; font-weight:900;">EXPIRED</span>`;
-            }
+            let statusHTML = (data.status === "ACTIVE") 
+                ? `<span class="status-dot status-active"></span> <span style="color:var(--neon-green); font-size:12px; font-weight:900;">ACTIVE</span>`
+                : `<span class="status-dot status-expired"></span> <span style="color:var(--neon-red); font-size:12px; font-weight:900;">EXPIRED</span>`;
 
             const card = `
                 <div class="glass-panel bet-card">
@@ -251,7 +254,6 @@
                         </div>
                         <div>${statusHTML}</div>
                     </div>
-                    
                     <div class="bookie-section">
                         <div class="bookie-box">
                             <div class="bookie-title" style="color:var(--primary);">BETPAWA</div>
@@ -261,7 +263,6 @@
                                 <a href="https://www.betpawa.co.tz" target="_blank" class="btn-action btn-open-pawa">OPEN SITE</a>
                             </div>
                         </div>
-
                         <div class="bookie-box">
                             <div class="bookie-title" style="color:#e61919;">SPORTYBET</div>
                             <div class="code-txt">${data.sporty}</div>
@@ -281,7 +282,6 @@
             btnElement.innerText = "✓ COPIED!";
             btnElement.style.background = "var(--neon-green)";
             btnElement.style.color = "black";
-            
             setTimeout(() => {
                 btnElement.innerText = originalText;
                 btnElement.style.background = "rgba(255,255,255,0.1)";
@@ -296,7 +296,7 @@
             const icon = document.getElementById('musicIcon');
 
             if(!playing || forcePlay) {
-                song.play().catch(e => console.log("Gusa screen kwanza kuruhusu sauti"));
+                song.play().catch(e => console.log("Gusa screen kuruhusu audio"));
                 btn.classList.add('playing');
                 icon.className = "fas fa-volume-up";
                 playing = true;
