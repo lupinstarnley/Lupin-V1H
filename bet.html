@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUPIN BET | DEEP SPACE SIGNALS</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <script src="https://unpkg.com/@cometchat/chat-sdk-javascript@latest/CometChat.js"></script>
-
     <style>
         :root {
             --bg: #050505;
@@ -16,163 +15,201 @@
             --secondary: #ff0055;
             --glass: rgba(10, 10, 15, 0.85);
             --border: rgba(0, 255, 204, 0.15);
-            --neon-green: #00ff00;
-            --neon-red: #ff0000;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; position: relative; }
-        .space-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: radial-gradient(circle at bottom, #1b0033 0%, #000000 100%); }
-        .stars { width: 2px; height: 2px; background: white; position: absolute; border-radius: 50%; box-shadow: 10vw 20vh #fff, 40vw 80vh #fff, 80vw 10vh #fff; animation: moveStars 100s linear infinite; }
-        
-        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-100vh); } }
+        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; }
 
-        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(20px); }
-        .modal-card { background: rgba(5,5,5,0.9); border: 2px solid var(--primary); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 50px rgba(0, 255, 204, 0.1); }
+        /* Background Animated Stars */
+        .space-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at bottom, #1b0033 0%, #000000 100%); }
+        .stars { width: 2px; height: 2px; background: white; position: absolute; border-radius: 50%; opacity: 0.5; animation: blink 3s infinite; }
 
-        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
-        .logo { font-family: 'Outfit'; font-size: 26px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .user-badge { background: rgba(0, 255, 204, 0.1); padding: 5px 15px; border-radius: 20px; font-weight: 900; color: var(--primary); font-size: 14px; border: 1px solid var(--primary); }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        #admin-panel { display: none; border: 1px solid var(--secondary); margin-bottom: 30px; background: rgba(255, 0, 85, 0.05); padding: 20px; border-radius: 20px; }
-        .input-box { background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; outline: none; }
-        .btn-send { background: linear-gradient(45deg, var(--secondary), #cc0044); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        /* Age Verification Modal */
+        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(20px); }
+        .modal-card { background: rgba(5,5,5,0.9); border: 2px solid var(--primary); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 50px rgba(0, 255, 204, 0.2); }
 
-        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
-        .stake-info { display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; }
-        .bookie-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .bookie-box { background: rgba(0,0,0,0.6); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid var(--border); }
-        .code-txt { font-family: 'Outfit'; font-size: 20px; font-weight: 900; margin-bottom: 10px; color: var(--primary); }
+        /* Header & UI */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .logo { font-family: 'Outfit'; font-size: 28px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+        .status-badge { font-size: 10px; background: rgba(0, 255, 204, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; text-transform: uppercase; }
 
-        .float-btn { position: fixed; bottom: 30px; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 24px; transition: 0.3s; }
+        /* Admin Panel (Hidden by default) */
+        #admin-panel { display: none; background: rgba(255, 0, 85, 0.05); border: 1px solid var(--secondary); border-radius: 20px; padding: 20px; margin: 20px 0; animation: slideDown 0.5s ease; }
+        .input-box { background: rgba(0,0,0,0.7); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
+        .btn-send { background: linear-gradient(45deg, var(--secondary), #cc0044); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 10px; box-shadow: 0 5px 15px rgba(255, 0, 85, 0.3); }
+
+        /* Signals Feed */
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        .signal-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; position: relative; overflow: hidden; animation: fadeIn 0.6s ease; }
+        .signal-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
+        .card-meta { display: flex; justify-content: space-between; font-size: 11px; opacity: 0.6; margin-bottom: 15px; font-weight: 600; }
+        .bookie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .bookie-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .bookie-name { font-size: 10px; color: var(--primary); font-weight: 700; letter-spacing: 1px; }
+        .bet-code { font-family: 'Outfit'; font-size: 22px; font-weight: 900; margin-top: 5px; color: #fff; }
+
+        /* Floating Buttons */
+        .float-btn { position: fixed; bottom: 30px; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 24px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .music-btn { right: 30px; background: var(--primary); color: black; }
         .wa-btn { left: 30px; background: #25D366; color: white; text-decoration: none; }
+        .float-btn:hover { transform: scale(1.1); }
+
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="space-wrap">
-        <div class="stars" style="top: 10%; left: 20%;"></div>
-        <div class="stars" style="top: 50%; left: 80%;"></div>
-    </div>
+    <div class="space-wrap" id="star-field"></div>
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3" type="audio/mpeg">
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
     <div id="ageModal">
         <div class="modal-card">
-            <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 50px; margin-bottom: 20px;"></i>
-            <h2 style="font-family: 'Outfit';">SYSTEM SECURED</h2>
-            <p id="statusMsg" style="font-size: 13px; opacity: 0.7; margin-bottom: 30px;">Deep space signals incoming. Confirm clearance.</p>
-            <button id="enterBtn" class="input-box" style="background: var(--primary); color: black; font-weight: 900; border:none;" onclick="verifySystem()">YES, I'M 18+ (ENTER)</button>
+            <i class="fas fa-user-secret" style="color: var(--primary); font-size: 60px; margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Outfit'; margin-bottom: 10px;">IDENTITY CHECK</h2>
+            <p style="font-size: 13px; opacity: 0.7; margin-bottom: 30px;">This encrypted frequency is for ages 18 and above only. Access granted?</p>
+            <button class="btn-send" style="background: var(--primary); color: black;" onclick="grantAccess()">YES, ENTER SYSTEM</button>
         </div>
     </div>
 
     <header>
         <div class="logo">LUPIN BET</div>
-        <div class="user-badge"><i class="fas fa-user-ninja"></i> <span id="userInfo">OFFLINE</span></div>
+        <div class="status-badge" id="system-status"><i class="fas fa-satellite fa-spin"></i> SYNCING...</div>
     </header>
 
-    <div class="container" style="max-width: 600px; margin: 30px auto; padding: 0 15px;">
+    <div class="container">
         <div id="admin-panel">
-            <h4 style="color: var(--secondary); margin-bottom: 10px;">ADMIN CONSOLE</h4>
-            <input type="text" id="pawaCode" placeholder="Betpawa Code" class="input-box">
-            <input type="text" id="sportyCode" placeholder="SportyBet Code" class="input-box">
-            <button class="btn-send" onclick="sendSignal()">TRANSMIT</button>
+            <h4 style="color: var(--secondary); margin-bottom: 15px;"><i class="fas fa-terminal"></i> SHADOW ADMIN CONSOLE</h4>
+            <input type="text" id="pawaInput" placeholder="Enter Betpawa Code..." class="input-box">
+            <input type="text" id="sportyInput" placeholder="Enter SportyBet Code..." class="input-box">
+            <button class="btn-send" onclick="transmitSignal()">TRANSMIT TO ALL USERS</button>
         </div>
 
-        <div id="bet-feed">
-            <div style="text-align: center; padding: 40px; opacity: 0.5;">WAITING FOR SATELLITE...</div>
+        <div id="signal-feed">
+            <div style="text-align: center; padding: 60px; opacity: 0.3;">
+                <i class="fas fa-circle-notch fa-spin fa-3x"></i><br><br>
+                <span>SCANNING DEEP SPACE FOR CODES...</span>
+            </div>
         </div>
     </div>
 
     <a href="https://wa.me/255782754785" class="float-btn wa-btn"><i class="fab fa-whatsapp"></i></a>
-    <div class="float-btn music-btn" id="musicBtn" onclick="toggleMusic()"><i class="fas fa-music" id="musicIcon"></i></div>
+    <div class="float-btn music-btn" onclick="toggleMusic()"><i class="fas fa-music" id="mIcon"></i></div>
 
-    <script>
-        const APP_ID = "1676976749d097e50"; 
-        const REGION = "us"; 
-        const AUTH_KEY = "518ddbb8a0ff8c4480eb7df1694a6ab8570daf40"; 
-        const GROUP_ID = "bet_oneway"; 
-        
-        let isReady = false;
-        let systemName = "Lupin_" + Math.floor(Math.random()*1000);
-        let systemUID = systemName.toLowerCase();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // INITALIZE COMETCHAT
-        window.onload = () => {
-            if (typeof CometChat !== 'undefined') {
-                let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
-                CometChat.init(APP_ID, appSetting).then(() => { 
-                    isReady = true; 
-                    console.log("CometChat Ready");
-                });
-            }
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8qDCwpuEg0-Dz_9X3OS5BbZcLldSOL58",
+            authDomain: "bet-time-6a8b2.firebaseapp.com",
+            databaseURL: "https://bet-time-6a8b2-default-rtdb.firebaseio.com/",
+            projectId: "bet-time-6a8b2",
+            appId: "1:542692701973:web:3657ddf67aeade45059b1c"
         };
 
-        function verifySystem() {
-            const btn = document.getElementById('enterBtn');
-            const msg = document.getElementById('statusMsg');
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-            if(!isReady) {
-                btn.innerText = "LINKING TO SATELLITE...";
-                msg.innerText = "Syncing with deep space server... Please wait.";
-                setTimeout(verifySystem, 2000);
+        // --- TRANSMIT SIGNAL (ADMIN) ---
+        window.transmitSignal = () => {
+            const pawa = document.getElementById('pawaInput').value;
+            const sporty = document.getElementById('sportyInput').value;
+            
+            if(!pawa && !sporty) return alert("System requires data to transmit!");
+
+            const signalsRef = ref(db, 'signals');
+            const newSignal = push(signalsRef);
+            
+            set(newSignal, {
+                pawa: pawa || "---",
+                sporty: sporty || "---",
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('pawaInput').value = '';
+                document.getElementById('sportyInput').value = '';
+                alert("Signal Transmitted Successfully!");
+            });
+        };
+
+        // --- RECEIVE SIGNALS (REAL-TIME) ---
+        const signalsQuery = query(ref(db, 'signals'), limitToLast(15));
+        onValue(signalsQuery, (snapshot) => {
+            const feed = document.getElementById('signal-feed');
+            const data = snapshot.val();
+            document.getElementById('system-status').innerHTML = '<i class="fas fa-check-circle"></i> SYSTEM LIVE';
+            
+            if(!data) {
+                feed.innerHTML = '<p style="text-align:center; opacity:0.3; margin-top:50px;">NO ACTIVE SIGNALS FOUND</p>';
                 return;
             }
 
+            feed.innerHTML = '';
+            // Display latest first
+            Object.values(data).reverse().forEach(signal => {
+                const card = `
+                    <div class="signal-card">
+                        <div class="card-meta">
+                            <span><i class="fas fa-signal"></i> ENCRYPTED SIGNAL</span>
+                            <span>${signal.time} <i class="far fa-clock"></i></span>
+                        </div>
+                        <div class="bookie-grid">
+                            <div class="bookie-box">
+                                <div class="bookie-name">BETPAWA</div>
+                                <div class="bet-code">${signal.pawa}</div>
+                            </div>
+                            <div class="bookie-box">
+                                <div class="bookie-name" style="color:var(--secondary)">SPORTYBET</div>
+                                <div class="bet-code">${signal.sporty}</div>
+                            </div>
+                        </div>
+                    </div>`;
+                feed.insertAdjacentHTML('beforeend', card);
+            });
+        });
+
+        // --- GLOBAL FUNCTIONS ---
+        window.grantAccess = () => {
             document.getElementById('ageModal').style.display = 'none';
-            document.getElementById('userInfo').innerText = systemName.toUpperCase();
-            toggleMusic(true);
-            connectCometChat();
+            // Auto-play music if possible
+            const music = document.getElementById('bgMusic');
+            music.play().catch(() => console.log("Music blocked by browser policy"));
+        };
+
+        window.toggleMusic = () => {
+            const music = document.getElementById('bgMusic');
+            const icon = document.getElementById('mIcon');
+            if (music.paused) {
+                music.play();
+                icon.classList.replace('fa-play', 'fa-music');
+            } else {
+                music.pause();
+                icon.classList.replace('fa-music', 'fa-play');
+            }
+        };
+
+        // --- ADMIN DETECTOR ---
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('admin') === 'shadow') {
+            document.getElementById('admin-panel').style.display = 'block';
         }
 
-        function connectCometChat() {
-            CometChat.login(systemUID, AUTH_KEY).then(user => { enterNetwork(); }, error => {
-                let newUser = new CometChat.User(systemUID);
-                newUser.setName(systemName);
-                CometChat.createUser(newUser, AUTH_KEY).then(res => {
-                    CometChat.login(systemUID, AUTH_KEY).then(u => enterNetwork());
-                });
-            });
-        }
-
-        function enterNetwork() {
-            CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(res => startListening(), err => startListening());
-        }
-
-        function startListening() {
-            fetchSignals();
-            CometChat.addMessageListener("LUPIN_SYNC", new CometChat.MessageListener({
-                onCustomMessageReceived: msg => { if(msg.type === "shadow_bet") renderCard(msg.data.customData); }
-            }));
-        }
-
-        function fetchSignals() {
-            let req = new CometChat.MessagesRequestBuilder().setGUID(GROUP_ID).setLimit(10).setCategories(["custom"]).build();
-            req.fetchPrevious().then(msgs => {
-                document.getElementById('bet-feed').innerHTML = '';
-                msgs.forEach(msg => { if(msg.type === "shadow_bet") renderCard(msg.data.customData); });
-            });
-        }
-
-        function renderCard(data) {
-            const feed = document.getElementById('bet-feed');
-            const card = `
-                <div class="glass-panel">
-                    <div style="font-weight:900; color:var(--primary); margin-bottom:10px;">LIVE SIGNAL</div>
-                    <div class="bookie-section">
-                        <div class="bookie-box"><div>PAWA</div><div class="code-txt">${data.pawa}</div></div>
-                        <div class="bookie-box"><div>SPORTY</div><div class="code-txt">${data.sporty}</div></div>
-                    </div>
-                </div>`;
-            feed.insertAdjacentHTML('afterbegin', card);
-        }
-
-        function toggleMusic(play = false) {
-            const song = document.getElementById('bgMusic');
-            if(play) song.play().catch(e => {});
+        // --- STAR FIELD GENERATOR ---
+        const field = document.getElementById('star-field');
+        for(let i=0; i<80; i++) {
+            const star = document.createElement('div');
+            star.className = 'stars';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            field.appendChild(star);
         }
     </script>
 </body>
