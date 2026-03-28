@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUPIN NEURAL LINK</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root{
+--bg:#050510;
+--primary:#00e5ff;
+--purple:#b026ff;
+--glass:rgba(255,255,255,0.08);
+}
+
+/* 🌌 SPACE */
+body{
+margin:0;
+font-family:Poppins;
+background: radial-gradient(circle,#130b29,#050510);
+color:white;
+display:flex;
+height:100vh;
+overflow:hidden;
+}
+
+/* stars */
+.star{position:absolute;width:2px;height:2px;background:white;animation:twinkle 3s infinite;}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* comet */
+.comet{position:absolute;width:3px;height:3px;background:white;box-shadow:0 0 10px cyan;animation:shoot 6s linear infinite;}
+@keyframes shoot{0%{transform:translate(100vw,-10vh)}100%{transform:translate(-20vw,100vh)}}
+
+/* sidebar */
+.sidebar{
+width:300px;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(20px);
+padding:10px;
+overflow:auto;
+}
+
+/* user */
+.chat-item{
+padding:10px;
+border-radius:12px;
+margin-bottom:5px;
+background:var(--glass);
+cursor:pointer;
+display:flex;
+gap:10px;
+}
+.avatar{
+width:40px;height:40px;border-radius:50%;
+background:linear-gradient(45deg,var(--primary),var(--purple));
+display:flex;align-items:center;justify-content:center;
+}
+
+/* chat */
+.chat{flex:1;display:flex;flex-direction:column;}
+.header{
+padding:10px;
+background:rgba(0,0,0,0.6);
+display:flex;justify-content:space-between;
+}
+
+.messages{flex:1;overflow:auto;padding:10px;}
+.msg{max-width:70%;padding:10px;border-radius:10px;}
+.sent{align-self:flex-end;background:rgba(0,229,255,0.2);}
+.received{align-self:flex-start;background:var(--glass);}
+.time{font-size:10px;opacity:.6}
+
+/* input */
+.input{display:flex;padding:10px;gap:5px;}
+input{flex:1;padding:10px;border-radius:20px;border:none;background:var(--glass);color:white;}
+button{width:40px;height:40px;border:none;border-radius:50%;background:var(--primary);cursor:pointer;}
+
+.footer{text-align:center;font-size:10px;color:var(--primary);text-shadow:0 0 10px var(--primary);}
+</style>
+</head>
+
+<body>
+
+<div id="space"></div>
+
+<div class="sidebar">
+<button onclick="uploadStatus()">➕ Status</button>
+<div id="statuses"></div>
+<hr>
+<div id="users"></div>
+</div>
+
+<div class="chat">
+<div class="header">
+<div id="chatName">Select Chat</div>
+<div>
+<i class="fa fa-phone" onclick="startCall(false)"></i>
+<i class="fa fa-video" onclick="startCall(true)"></i>
+</div>
+</div>
+
+<div class="messages" id="messages"></div>
+
+<div class="input">
+<input id="msg">
+<input type="file" id="file" hidden>
+<button onclick="file.click()">📎</button>
+<button onclick="sendMsg()">➤</button>
+<button onclick="recordVoice()">🎤</button>
+</div>
+
+<div class="footer">✨ DEVELOPED BY LUPIN ✨</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, set, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+/* CONFIG */
+const firebaseConfig={
+apiKey:"AIzaSyBZB8z8rSF...",
+authDomain:"lupin-neural-link.firebaseapp.com",
+databaseURL:"https://lupin-neural-link-default-rtdb.firebaseio.com",
+projectId:"lupin-neural-link",
+storageBucket:"lupin-neural-link.appspot.com"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const storage=getStorage(app);
+
+/* USER */
+let me=localStorage.getItem("systemUser")||"user"+Math.floor(Math.random()*9999);
+
+/* USERS */
+["alex","glory","king","lupin"].forEach(u=>{
+if(u!==me){
+users.innerHTML+=`<div class="chat-item" onclick="openChat('${u}')">
+<div class="avatar">${u[0]}</div>${u}</div>`;
+}
+});
+
+/* CHAT */
+let current=null;
+
+window.openChat=(u)=>{
+current=[me,u].sort().join("_");
+chatName.innerText=u;
+messages.innerHTML="";
+listen();
+listenCall();
+};
+
+/* SEND */
+window.sendMsg=()=>{
+if(!msg.value)return;
+push(ref(db,"chats/"+current),{
+sender:me,text:msg.value,time:Date.now(),status:"sent"
+});
+msg.value="";
+};
+
+/* FILE */
+file.onchange=async e=>{
+let f=e.target.files[0];
+let r=sRef(storage,"files/"+Date.now());
+await uploadBytes(r,f);
+let url=await getDownloadURL(r);
+
+push(ref(db,"chats/"+current),{
+sender:me,file:url,time:Date.now()
+});
+};
+
+/* LISTEN */
+function listen(){
+onChildAdded(ref(db,"chats/"+current),snap=>{
+let d=snap.val();
+let div=document.createElement("div");
+div.className="msg "+(d.sender===me?"sent":"received");
+
+div.innerHTML=`
+${d.text||""}
+${d.file?`<a href="${d.file}" target="_blank">📎</a>`:""}
+${d.audio?`<audio controls src="${d.audio}"></audio>`:""}
+<div class="time">${new Date(d.time).toLocaleTimeString()} ✔✔</div>
+`;
+
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
+
+if(d.sender!==me){
+update(ref(db,"chats/"+current+"/"+snap.key),{status:"read"});
+}
+});
+}
+
+/* VOICE */
+let rec, chunks=[];
+window.recordVoice=async()=>{
+let stream=await navigator.mediaDevices.getUserMedia({audio:true});
+rec=new MediaRecorder(stream);
+rec.start();
+rec.ondataavailable=e=>chunks.push(e.data);
+
+rec.onstop=async()=>{
+let blob=new Blob(chunks);
+let r=sRef(storage,"voices/"+Date.now());
+await uploadBytes(r,blob);
+let url=await getDownloadURL(r);
+
+push(ref(db,"chats/"+current),{
+sender:me,audio:url,time:Date.now()
+});
+chunks=[];
+};
+
+setTimeout(()=>rec.stop(),3000);
+};
+
+/* STATUS */
+window.uploadStatus=()=>{
+let i=document.createElement("input");
+i.type="file";
+i.onchange=async e=>{
+let f=e.target.files[0];
+let r=sRef(storage,"status/"+Date.now());
+await uploadBytes(r,f);
+let url=await getDownloadURL(r);
+
+push(ref(db,"status"),{user:me,url,time:Date.now()});
+};
+i.click();
+};
+
+/* STATUS CLEANER */
+const FIVE=5*60*60*1000;
+onValue(ref(db,"status"),snap=>{
+statuses.innerHTML="";
+snap.forEach(s=>{
+let d=s.val();
+if(Date.now()-d.time>FIVE){
+remove(ref(db,"status/"+s.key));
+}else{
+statuses.innerHTML+=`<div>${d.user} 💜</div>`;
+}
+});
+});
+
+/* CALL */
+let pc,localStream;
+const servers={iceServers:[{urls:"stun:stun.l.google.com:19302"}]};
+
+window.startCall=async(video)=>{
+localStream=await navigator.mediaDevices.getUserMedia({video,audio:true});
+pc=new RTCPeerConnection(servers);
+localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+
+pc.onicecandidate=e=>{
+if(e.candidate){
+push(ref(db,"calls/"+current+"/candidates"),e.candidate.toJSON());
+}
+};
+
+pc.ontrack=e=>{
+let a=document.createElement("audio");
+a.srcObject=e.streams[0];
+a.autoplay=true;
+document.body.appendChild(a);
+};
+
+let offer=await pc.createOffer();
+await pc.setLocalDescription(offer);
+
+set(ref(db,"calls/"+current),{offer,caller:me});
+};
+
+function listenCall(){
+onChildAdded(ref(db,"calls/"+current+"/candidates"),async snap=>{
+if(pc)await pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+});
+
+onValue(ref(db,"calls/"+current),async snap=>{
+let d=snap.val();
+if(!d)return;
+
+if(d.offer && !pc){
+pc=new RTCPeerConnection(servers);
+localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true});
+localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+
+await pc.setRemoteDescription(new RTCSessionDescription(d.offer));
+let ans=await pc.createAnswer();
+await pc.setLocalDescription(ans);
+
+update(ref(db,"calls/"+current),{answer:ans});
+}
+
+if(d.answer && pc){
+await pc.setRemoteDescription(new RTCSessionDescription(d.answer));
+}
+});
+}
+
+/* SPACE */
+for(let i=0;i<80;i++){
+let s=document.createElement("div");
+s.className="star";
+s.style.left=Math.random()*100+"vw";
+s.style.top=Math.random()*100+"vh";
+document.body.appendChild(s);
+}
+for(let i=0;i<5;i++){
+let c=document.createElement("div");
+c.className="comet";
+c.style.top=Math.random()*100+"vh";
+document.body.appendChild(c);
+}
+</script>
+
+</body>
+</html>
