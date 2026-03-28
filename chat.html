@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUPIN MESSENGER | NEURAL LINK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ... Zile zile CSS zako zote za mwanzo (Glassmorphism, Universe, etc.) zinabaki hapa ... */
+        :root {
+            --bg-deep: #050510; --primary: #00e5ff; --secondary: #b026ff;
+            --admin-gold: #ffd700; --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.15); --border: rgba(0, 229, 255, 0.2);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-deep); color: white; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        header { padding: 15px 20px 0 20px; background: rgba(5, 5, 16, 0.95); border-bottom: 1px solid var(--border); z-index: 50; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; color: white; text-shadow: 0 0 10px var(--primary); }
+        .header-icons { display: flex; gap: 20px; font-size: 18px; color: white; cursor: pointer; }
+        .tabs { display: flex; justify-content: space-between; padding-bottom: 10px; }
+        .tab { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: #888; cursor: pointer; padding-bottom: 10px; transition: 0.3s; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .app-container { display: flex; flex: 1; width: 100%; overflow: hidden; position: relative; }
+        .sidebar { width: 350px; background: rgba(5, 5, 15, 0.85); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; backdrop-filter: blur(15px); }
+        .list-container { flex: 1; overflow-y: auto; padding: 10px; }
+        .chat-item { padding: 12px; border-radius: 15px; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 15px; background: var(--glass); transition: 0.3s; border: 1px solid transparent; }
+        .chat-item:hover { background: rgba(0, 229, 255, 0.1); border-color: var(--primary); }
+        .avatar-container { position: relative; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, var(--secondary), var(--primary)); display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .online-dot { width: 14px; height: 14px; background: #00ff00; border-radius: 50%; position: absolute; bottom: 2px; right: 2px; border: 2px solid var(--bg-deep); }
+        .chat-window { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.6); position: relative; height: 100%; display: none; }
+        .chat-header { padding: 10px 20px; background: rgba(5, 5, 16, 0.95); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .chat-header-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .chat-actions { display: flex; gap: 20px; font-size: 18px; color: var(--primary); cursor: pointer; }
+        #messages-view { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; background: url('https://i.ibb.co/4pDNDk1/whatsapp-bg-dark.png'); background-size: cover; background-blend-mode: overlay; }
+        .msg { max-width: 75%; padding: 8px 12px; border-radius: 15px; font-size: 14px; position: relative; word-wrap: break-word; display: flex; flex-direction: column; }
+        .msg.sent { align-self: flex-end; background: rgba(0, 229, 255, 0.15); border: 1px solid var(--primary); border-bottom-right-radius: 0; }
+        .msg.received { align-self: flex-start; background: var(--glass-strong); border: 1px solid rgba(255,255,255,0.2); border-bottom-left-radius: 0; }
+        .msg-time { font-size: 10px; color: #aaa; text-align: right; margin-top: 4px; display: flex; justify-content: flex-end; align-items: center; gap: 5px; }
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+        .tick { font-size: 12px; } .tick.read { color: #34b7f1; }
+        .input-area { padding: 10px 20px; background: rgba(5, 5, 15, 0.95); display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); position: relative;}
+        .msg-input { flex: 1; background: var(--glass); border: 1px solid var(--border); padding: 12px 20px; border-radius: 25px; color: white; outline: none; font-size: 14px; transition: 0.3s;}
+        .msg-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+        .action-btn { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; background: transparent; color: var(--primary); transition: 0.3s; }
+        .btn-send { background: var(--primary); color: black; }
+        .developed-by { text-align: center; font-size: 10px; font-weight: bold; color: var(--primary); text-shadow: 0 0 8px var(--primary); padding: 5px; background: rgba(5, 5, 16, 0.95); letter-spacing: 1px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
+        .glass-modal { background: rgba(5, 5, 15, 0.6); border: 1px solid var(--primary); padding: 30px; border-radius: 25px; box-shadow: 0 0 40px rgba(0, 229, 255, 0.4); width: 90%; max-width: 350px; text-align: center; }
+        .glass-modal h3 { color: white; margin-bottom: 20px; font-weight: 700; text-shadow: 0 0 10px var(--primary); }
+        .glass-input { width: 100%; padding: 15px; border-radius: 20px; border: 1px solid var(--primary); background: rgba(0,0,0,0.5); color: white; outline: none; margin-bottom: 20px; font-size: 16px; box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.2); text-align: center; }
+        .modal-btns button { padding: 12px 25px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 45%; }
+        .btn-cancel { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); }
+        .btn-glow { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
+        
+        /* 🔥 NEW: Video Call UI Overlay */
+        #call-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; flex-direction: column; }
+        #remote-video { width: 100%; height: 100%; object-fit: cover; }
+        #local-video { position: absolute; bottom: 20px; right: 20px; width: 120px; height: 160px; object-fit: cover; border: 2px solid var(--primary); border-radius: 15px; }
+        .call-controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 3001;}
+        .call-btn { width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .btn-end { background: #ff3333; color: white; box-shadow: 0 0 15px red; }
+
+        @media (max-width: 768px) { .sidebar { width: 100%; } .chat-window { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; } }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <input type="file" id="profile-upload" style="display: none;" accept="image/*">
+    <input type="file" id="status-upload" style="display: none;" accept="image/*,video/*">
+
+    <div class="modal-overlay" id="action-modal">
+        <div class="glass-modal">
+            <h3 id="modal-title">Create Group</h3>
+            <input type="text" id="modal-input" class="glass-input" placeholder="Enter name/number...">
+            <div class="modal-btns" style="display: flex; justify-content: space-between;">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-glow" onclick="executeModalAction()">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="call-overlay">
+        <video id="remote-video" autoplay playsinline></video>
+        <video id="local-video" autoplay playsinline muted></video>
+        <div class="call-controls">
+            <button class="call-btn btn-end" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+        </div>
+        <div id="incoming-call-ui" style="display:none; position:absolute; top:40%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+            <h2 style="color:white; margin-bottom:20px;">Incoming Call...</h2>
+            <button class="call-btn" style="background:#00ff00; color:white; margin:0 auto;" onclick="acceptCall()"><i class="fas fa-phone"></i></button>
+        </div>
+    </div>
+
+    <header>
+        <div class="top-bar">
+            <div class="logo">LUPIN</div>
+            <div class="header-icons">
+                <i class="fas fa-camera" onclick="document.getElementById('status-upload').click()"></i>
+                <i class="fas fa-search"></i>
+                <i class="fas fa-user-circle" onclick="document.getElementById('profile-upload').click()"></i>
+            </div>
+        </div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('chats')"><i class="fas fa-comment"></i> CHATS</div>
+            <div class="tab" onclick="switchTab('status')"><i class="fas fa-circle-notch"></i> STATUS</div>
+            <div class="tab" onclick="switchTab('calls')"><i class="fas fa-phone"></i> CALLS</div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <div style="display: flex; gap: 10px; padding: 10px;">
+                <button style="flex:1; padding:10px; background:var(--glass); border:1px solid var(--border); border-radius:15px; color:white;" onclick="openModal('New Channel', 'Channel Name')"><i class="fas fa-bullhorn"></i> Channel</button>
+                <button style="flex:1; padding:10px; background:var(--glass); border:1px solid var(--primary); border-radius:15px; color:var(--primary);" onclick="openModal('Invite Link', 'Enter Phone Number')"><i class="fas fa-user-plus"></i> Invite</button>
+            </div>
+            
+            <div class="list-container" id="chat-list">
+                <div class="chat-item" onclick="openChat('glory', 'Glory')">
+                    <div class="avatar-container">
+                        <div class="avatar" id="avatar-glory"><i class="fas fa-user"></i></div>
+                        <div class="online-dot"></div>
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-weight:700; font-size:15px; color:white;">Glory</div>
+                        <div style="font-size:12px; color:#aaa;">Tuma picha...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <div class="chat-header-info" onclick="closeChat()">
+                    <i class="fas fa-arrow-left" style="color: white; font-size: 18px;"></i>
+                    <div class="avatar" style="width: 40px; height: 40px; font-size: 16px;"><i class="fas fa-user"></i></div>
+                    <div>
+                        <div id="active-chat-name" style="font-weight: 700; font-size: 16px;">Chat</div>
+                        <div style="font-size: 11px; color: var(--primary);">online</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <i class="fas fa-video" onclick="startCall(true)"></i>
+                    <i class="fas fa-phone-alt" onclick="startCall(false)"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+
+            <div id="messages-view">
+                <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #ffd700; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 10px;">
+                    <i class="fas fa-lock"></i> Messages are end-to-end encrypted.
+                </div>
+            </div>
+
+            <div class="input-area">
+                <i class="fas fa-plus action-btn" onclick="document.getElementById('file-upload').click()"></i>
+                <input type="file" id="file-upload" style="display: none;" accept="image/*,video/*">
+                <input type="text" id="msg-input" class="msg-input" placeholder="Message...">
+                <button class="action-btn" id="mic-btn"><i class="fas fa-microphone"></i></button>
+                <button class="action-btn btn-send" id="send-btn" style="display: none;" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div class="developed-by">DEVELOPED BY LUPIN</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onChildAdded, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZB8z8rSFohwnVx8M4wBHr4O51BFbFw9g",
+            authDomain: "lupin-neural-link.firebaseapp.com",
+            projectId: "lupin-neural-link",
+            databaseURL: "https://lupin-neural-link-default-rtdb.firebaseio.com", 
+            storageBucket: "lupin-neural-link.firebasestorage.app",
+            messagingSenderId: "511177248524",
+            appId: "1:511177248524:web:b02b141e3259e8790d0329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        // Fetch Username globally from Login Page (index.html)
+        let myID = localStorage.getItem('systemUser');
+        if(!myID) { myID = "lupin_" + Math.floor(Math.random()*1000); localStorage.setItem('systemUser', myID); }
+        document.querySelector('.logo').innerText = myID.toUpperCase(); // Show your name on top
+
+        let currentChatId = null;
+        let peerConnection;
+        let localStream;
+        const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+
+        // 🟢 1. CHAT & IMAGE UPLOAD LOGIC
+        window.openChat = function(id, name) {
+            document.getElementById('sidebar').style.display = window.innerWidth <= 768 ? 'none' : 'flex';
+            document.getElementById('chat-window').style.display = 'flex';
+            document.getElementById('active-chat-name').innerText = name;
+            currentChatId = [myID, id].sort().join("_");
+            document.getElementById('messages-view').innerHTML = ''; 
+            listenForMessages(currentChatId);
+            listenForCalls(currentChatId);
+        };
+
+        window.closeChat = function() {
+            document.getElementById('sidebar').style.display = 'flex';
+            document.getElementById('chat-window').style.display = 'none';
+        };
+
+        window.sendMsg = function(imageUrl = null) {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if(!text && !imageUrl || !currentChatId) return;
+            
+            const msgRef = push(ref(db, `chats/${currentChatId}/messages`));
+            set(msgRef, {
+                sender: myID,
+                text: text,
+                imageUrl: imageUrl, // If it's a picture
+                timestamp: Date.now(),
+                status: 'sent'
+            });
+            input.value = '';
+            toggleMicSendBtn();
+        };
+
+        // File Upload Listener (Chat Images)
+        document.getElementById('file-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const fileRef = sRef(storage, `chats/${currentChatId}/${Date.now()}_${file.name}`);
+            await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(fileRef);
+            window.sendMsg(url); 
+        });
+
+        // Profile Picture Upload
+        document.getElementById('profile-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const pRef = sRef(storage, `profiles/${myID}`);
+            await uploadBytes(pRef, file);
+            const url = await getDownloadURL(pRef);
+            set(ref(db, `users/${myID}/profilePic`), url);
+            alert("Profile Picture Updated!");
+        });
+
+        function listenForMessages(chatId) {
+            const msgsRef = ref(db, `chats/${chatId}/messages`);
+            onChildAdded(msgsRef, (snapshot) => {
+                const data = snapshot.val();
+                renderMessage(data);
+                if(data.sender !== myID && data.status !== 'read') {
+                    update(ref(db, `chats/${chatId}/messages/${snapshot.key}`), { status: 'read' });
+                }
+            });
+        }
+
+        function renderMessage(msg) {
+            const view = document.getElementById('messages-view');
+            const isMe = msg.sender === myID;
+            let tickHTML = "";
+            if(isMe) {
+                if(msg.status === 'sent') tickHTML = '<i class="fas fa-check tick"></i>';
+                else if(msg.status === 'delivered') tickHTML = '<i class="fas fa-check-double tick"></i>';
+                else if(msg.status === 'read') tickHTML = '<i class="fas fa-check-double tick read"></i>';
+            }
+            const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let content = msg.imageUrl ? `<img src="${msg.imageUrl}">` : msg.text;
+
+            view.innerHTML += `
+                <div class="msg ${isMe ? 'sent' : 'received'}">
+                    <span style="font-size:10px; color:var(--primary); font-weight:bold;">${msg.sender}</span>
+                    <div>${content}</div>
+                    <div class="msg-time">${time} ${tickHTML}</div>
+                </div>
+            `;
+            view.scrollTop = view.scrollHeight;
+        }
+
+        // 🟢 2. STATUS UPLOAD & 5-HOUR AUTO DELETE
+        document.getElementById('status-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const sRefObj = sRef(storage, `status/${myID}_${Date.now()}`);
+            await uploadBytes(sRefObj, file);
+            const url = await getDownloadURL(sRefObj);
+            
+            // Save to DB
+            const statRef = push(ref(db, `status/${myID}`));
+            set(statRef, { url: url, timestamp: Date.now() });
+            alert("Status Uploaded! Will auto-delete in 5 hours.");
+        });
+
+        // 5-Hour Cleaner (Runs on load)
+        const FIVE_HOURS = 5 * 60 * 60 * 1000;
+        onValue(ref(db, `status`), (snap) => {
+            snap.forEach((userStatuses)=> {
+                userStatuses.forEach((statusSnap) => {
+                    if (Date.now() - statusSnap.val().timestamp > FIVE_HOURS) {
+                        remove(ref(db, `status/${userStatuses.key}/${statusSnap.key}`)); // Kufuta DB halisi
+                    }
+                });
+            });
+        });
+
+        // 🟢 3. WEBRTC CALL ENGINE (Reality - No alerts)
+        window.startCall = async function(isVideo) {
+            document.getElementById('call-overlay').style.display = 'flex';
+            localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+            document.getElementById('local-video').srcObject = localStream;
+            
+            peerConnection = new RTCPeerConnection(servers);
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+            
+            peerConnection.ontrack = (event) => { document.getElementById('remote-video').srcObject = event.streams[0]; };
+            
+            const callDoc = ref(db, `calls/${currentChatId}`);
+            peerConnection.onicecandidate = event => {
+                if(event.candidate) push(ref(db, `calls/${currentChatId}/offerCandidates`), event.candidate.toJSON());
+            };
+
+            const offerDescription = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offerDescription);
+            
+            set(callDoc, { offer: { type: offerDescription.type, sdp: offerDescription.sdp }, caller: myID });
+        };
+
+        function listenForCalls(chatId) {
+            const callDoc = ref(db, `calls/${chatId}`);
+            onValue(callDoc, (snapshot) => {
+                const data = snapshot.val();
+                if(data && data.offer && data.caller !== myID && !peerConnection) {
+                    document.getElementById('call-overlay').style.display = 'flex';
+                    document.getElementById('incoming-call-ui').style.display = 'block';
+                }
+            });
+        }
+
+        window.acceptCall = async function() {
+            document.getElementById('incoming-call-ui').style.display = 'none';
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            document.getElementById('local-video').srcObject = localStream;
+            
+            peerConnection = new RTCPeerConnection(servers);
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+            peerConnection.ontrack = (event) => { document.getElementById('remote-video').srcObject = event.streams[0]; };
+
+            const callDoc = ref(db, `calls/${currentChatId}`);
+            onValue(callDoc, async (snapshot) => {
+                const offer = snapshot.val().offer;
+                if(offer) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+                    const answerDescription = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answerDescription);
+                    update(callDoc, { answer: { type: answerDescription.type, sdp: answerDescription.sdp }});
+                }
+            });
+        };
+
+        window.endCall = function() {
+            if(peerConnection) peerConnection.close();
+            if(localStream) localStream.getTracks().forEach(track => track.stop());
+            document.getElementById('call-overlay').style.display = 'none';
+            remove(ref(db, `calls/${currentChatId}`)); // Clear call from DB
+            peerConnection = null;
+        };
+
+        // UI Listeners
+        const msgInput = document.getElementById('msg-input');
+        window.toggleMicSendBtn = function() {
+            if(msgInput.value.trim().length > 0) {
+                document.getElementById('mic-btn').style.display = 'none';
+                document.getElementById('send-btn').style.display = 'flex';
+            } else {
+                document.getElementById('mic-btn').style.display = 'flex';
+                document.getElementById('send-btn').style.display = 'none';
+            }
+        };
+        msgInput.addEventListener('input', toggleMicSendBtn);
+        msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') window.sendMsg(); });
+
+    </script>
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+        function openModal(title, placeholder) {
+            document.getElementById('action-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-input').placeholder = placeholder;
+            document.getElementById('modal-input').value = '';
+        }
+        function closeModal() { document.getElementById('action-modal').style.display = 'none'; }
+        function executeModalAction() { closeModal(); }
+    </script>
+</body>
+</html>
