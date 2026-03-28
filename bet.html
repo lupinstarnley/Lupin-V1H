@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN BET | SHADOW SIGNALS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script defer src="https://widget-v4.cometchat.io/bundle.js"></script>
+    <style>
+        :root {
+            --bg: #02020a;
+            --primary: #00e5ff;
+            --secondary: #ff007f;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --neon-green: #2ecc71;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; }
+
+        /* SOLAR SYSTEM BACKGROUND */
+        #space { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; background: radial-gradient(circle at center, #0a0a20 0%, #02020a 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; }
+        .comet { position: absolute; width: 2px; height: 2px; background: white; box-shadow: 0 0 10px 2px white; border-radius: 50%; }
+        
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes cometMove { 
+            0% { transform: translateX(100vw) translateY(-100vh); opacity: 1; } 
+            100% { transform: translateX(-100vw) translateY(100vh); opacity: 0; } 
+        }
+
+        /* AGE MODAL */
+        #ageModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; 
+            z-index: 9999; backdrop-filter: blur(20px);
+        }
+        .modal-card {
+            background: var(--glass); border: 2px solid var(--border); border-radius: 30px;
+            padding: 40px; text-align: center; max-width: 400px; width: 90%;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+        }
+        .modal-card h2 { font-family: 'Outfit'; color: var(--primary); margin-bottom: 20px; }
+        .age-btns { display: flex; gap: 15px; margin-top: 30px; }
+        .age-btn { 
+            flex: 1; padding: 15px; border-radius: 50px; border: none; font-weight: 900; 
+            cursor: pointer; transition: 0.3s; font-size: 14px;
+        }
+        .btn-yes { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary); }
+        .btn-no { background: transparent; border: 1px solid var(--secondary); color: var(--secondary); }
+
+        /* GLASSMORPHISM UI */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .logo { font-family: 'Outfit'; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 25px; padding: 25px; margin-bottom: 20px; }
+        
+        /* ADMIN PANEL */
+        #admin-panel { border: 2px solid var(--secondary); display: none; }
+        .input-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 15px; width: 100%; margin: 10px 0; outline: none; }
+        .btn-send { background: var(--secondary); color: white; border: none; padding: 15px; border-radius: 50px; width: 100%; font-weight: 900; cursor: pointer; }
+
+        /* BET CARDS */
+        .bet-card { position: relative; animation: slideUp 0.5s ease; border-radius: 30px; }
+        .type-tag { position: absolute; top: -10px; right: 20px; background: var(--primary); color: black; padding: 5px 15px; border-radius: 20px; font-weight: 900; font-size: 10px; }
+        .code-display { 
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; 
+            text-align: center; cursor: pointer; margin: 10px 0; border: 1px dashed var(--primary); 
+        }
+        .win-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; font-weight: 600; }
+        
+        .redirect-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .r-btn { padding: 12px; border-radius: 50px; text-decoration: none; text-align: center; font-size: 11px; font-weight: 900; color: white; }
+        .bp-bg { background: #000; border: 1px solid #2ecc71; } 
+        .sy-bg { background: #e61919; }
+
+        .aviator-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #e61919; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px #e61919; z-index: 1000; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="space"></div>
+    <audio id="aviatorSfx" src="https://www.soundboard.com/handler/Downloadaudio.ashx?id=336214" loop></audio>
+
+    <div id="ageModal">
+        <div class="modal-card">
+            <i class="fas fa-exclamation-triangle" style="color: #f1c40f; font-size: 40px; margin-bottom: 20px;"></i>
+            <h2>VERIFY AGE</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Je, una umri wa miaka 18 au zaidi kuingia Lupin Bet?</p>
+            <div class="age-btns">
+                <button class="age-btn btn-no" onclick="window.location.href='index.html'">HAPANA</button>
+                <button class="age-btn btn-yes" onclick="verifyAge()">NDIYO</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">LUPIN BET</div>
+        <div id="userInfo" style="font-weight: 900; color: var(--primary);">GUEST</div>
+    </header>
+
+    <div class="container" style="max-width: 550px; margin: 20px auto; padding: 0 15px;">
+        
+        <div id="admin-panel" class="glass-panel">
+            <h4 style="color: var(--secondary); margin-bottom: 10px;"><i class="fas fa-user-secret"></i> SHADOW TERMINAL</h4>
+            <select id="matchType" class="input-box">
+                <option value="RANDOM MATCH">RANDOM MATCH</option>
+                <option value="FIXED MATCH">FIXED MATCH 💎</option>
+            </select>
+            <input type="text" id="pawaCode" placeholder="Betpawa Booking Code..." class="input-box">
+            <input type="text" id="sportyCode" placeholder="SportyBet Booking Code..." class="input-box">
+            <input type="number" id="stakeAmount" placeholder="Recommended Stake (TZS)..." class="input-box">
+            <button class="btn-send" onclick="sendSignal()">BROADCAST SIGNAL</button>
+        </div>
+
+        <div id="bet-feed">
+            <div class="loader" style="text-align: center; padding: 40px; opacity: 0.4;">
+                <i class="fas fa-satellite-dish fa-spin" style="font-size: 30px; margin-bottom: 10px;"></i><br>
+                WAITING FOR SHADOW SIGNALS...
+            </div>
+        </div>
+    </div>
+
+    <div class="aviator-btn" onclick="toggleAviator()"><i class="fas fa-plane-departure"></i></div>
+
+    <script>
+        // CONFIG
+        const APP_ID = "21151475704618df"; 
+        const REGION = "us"; 
+        const AUTH_KEY = "6f0490333289052601990c884699564619969"; 
+        const currentUser = localStorage.getItem('systemUser') || "Guest";
+        const GROUP_ID = "lupin_bet_signals"; // Hakikisha hili kundi lipo CometChat
+
+        // SPACE ENGINE
+        const space = document.getElementById('space');
+        for(let i=0; i<120; i++) {
+            let s = document.createElement('div'); s.className='star';
+            s.style.width=Math.random()*2.5+'px'; s.style.height=s.style.width;
+            s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
+            s.style.animationDuration = (Math.random()*3+2)+'s';
+            space.appendChild(s);
+        }
+
+        function createComet() {
+            let c = document.createElement('div'); c.className='comet';
+            c.style.left = Math.random()*100+'vw'; c.style.top = Math.random()*100+'vh';
+            c.style.animation = `cometMove ${Math.random()*4+4}s linear forwards`;
+            space.appendChild(c);
+            setTimeout(() => c.remove(), 8000);
+        }
+        setInterval(createComet, 5000);
+
+        // AGE & INITIALIZE
+        function verifyAge() {
+            document.getElementById('ageModal').style.display = 'none';
+            document.getElementById('userInfo').innerText = currentUser.toUpperCase();
+            if(currentUser.toUpperCase() === "SHADOW") {
+                document.getElementById('admin-panel').style.display = 'block';
+            }
+            initCometChat();
+        }
+
+        // COMETCHAT ENGINE
+        function initCometChat() {
+            let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+            CometChat.init(APP_ID, appSetting).then(() => {
+                CometChat.login(currentUser, AUTH_KEY).then(user => {
+                    console.log("Logged into Neural Net");
+                    // Listener ya kupokea
+                    CometChat.addMessageListener("SIGNAL_LISTENER", new CometChat.MessageListener({
+                        onCustomMessageReceived: customMessage => {
+                            if(customMessage.type === "bet_signal") {
+                                displaySignal(customMessage.data.customData);
+                            }
+                        }
+                    }));
+                });
+            });
+        }
+
+        function sendSignal() {
+            let customData = {
+                type: document.getElementById('matchType').value,
+                pawa: document.getElementById('pawaCode').value,
+                sporty: document.getElementById('sportyCode').value,
+                stake: document.getElementById('stakeAmount').value,
+                date: new Date().toLocaleDateString()
+            };
+
+            let customMessage = new CometChat.CustomMessage(GROUP_ID, CometChat.RECEIVER_TYPE.GROUP, "bet_signal", customData);
+
+            CometChat.sendCustomMessage(customMessage).then(msg => {
+                alert("Signal Broadcasted Successfully!");
+                displaySignal(customData);
+            }, err => alert("Error: Group GUID missing or invalid"));
+        }
+
+        function displaySignal(data) {
+            const feed = document.getElementById('bet-feed');
+            if(feed.querySelector('.loader')) feed.innerHTML = '';
+            
+            const pWin = (data.stake * 3.4).toLocaleString();
+            const sWin = (data.stake * 3.7).toLocaleString();
+
+            const card = `
+                <div class="glass-panel bet-card">
+                    <span class="type-tag">${data.type}</span>
+                    <div style="font-size: 11px; opacity: 0.5; margin-bottom: 15px;">${data.date} | VIA SHADOW</div>
+                    
+                    <div class="code-display" onclick="copyCode('${data.pawa}', this)">
+                        <span style="font-size: 9px; color: var(--primary); font-weight: 900;">BETPAWA CODE</span><br>
+                        <strong>${data.pawa}</strong>
+                    </div>
+
+                    <div class="code-display" onclick="copyCode('${data.sporty}', this)">
+                        <span style="font-size: 9px; color: var(--secondary); font-weight: 900;">SPORTYBET CODE</span><br>
+                        <strong>${data.sporty}</strong>
+                    </div>
+
+                    <div class="win-row">
+                        <span style="color: var(--neon-green)">PAWA EST: TZS ${pWin}</span>
+                        <span style="color: #f1c40f">SPORTY EST: TZS ${sWin}</span>
+                    </div>
+
+                    <div class="redirect-btns">
+                        <a href="https://www.betpawa.co.tz" target="_blank" class="r-btn bp-bg">BETPAWA</a>
+                        <a href="https://www.sportybet.com/tz" target="_blank" class="r-btn sy-bg">SPORTYBET</a>
+                    </div>
+                </div>
+            `;
+            feed.insertAdjacentHTML('afterbegin', card);
+        }
+
+        function copyCode(code, el) {
+            navigator.clipboard.writeText(code);
+            const old = el.innerHTML;
+            el.innerHTML = "<strong style='color: var(--neon-green)'>COPIED!</strong>";
+            setTimeout(() => el.innerHTML = old, 1500);
+        }
+
+        let flying = false;
+        function toggleAviator() {
+            const sfx = document.getElementById('aviatorSfx');
+            if(!flying) { sfx.play(); flying=true; } else { sfx.pause(); flying=false; }
+        }
+    </script>
+</body>
+</html>
