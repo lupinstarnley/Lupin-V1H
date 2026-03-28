@@ -9,84 +9,123 @@
     <script defer src="https://widget-v4.cometchat.io/bundle.js"></script>
     <style>
         :root {
-            --bg: #02020a;
-            --primary: #00e5ff;
-            --secondary: #ff007f;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --neon-green: #2ecc71;
+            --bg: #0a0a0a;
+            --primary: #00ffcc;
+            --secondary: #ff0055;
+            --glass: rgba(20, 20, 20, 0.8);
+            --border: rgba(255, 255, 255, 0.05);
+            --neon-green: #00ff00;
+            --neon-red: #ff0000;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; }
+        body { 
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #02020a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white; overflow-x: hidden; min-height: 100vh; 
+        }
 
-        #space { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-2; background: radial-gradient(circle at center, #0a0a20 0%, #02020a 100%); }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
         /* AGE MODAL */
-        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(20px); }
-        .modal-card { background: var(--glass); border: 2px solid var(--border); border-radius: 30px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); }
+        #ageModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(15px); }
+        .modal-card { background: rgba(10,10,10,0.9); border: 2px solid var(--primary); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 40px rgba(0, 255, 204, 0.2); }
 
-        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
         .logo { font-family: 'Outfit'; font-size: 26px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        #admin-panel { display: none; border: 2px solid var(--secondary); margin-bottom: 30px; background: rgba(255, 0, 127, 0.03); }
-        .input-box { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 15px; width: 100%; margin: 10px 0; outline: none; transition: 0.3s; }
-        .btn-send { background: var(--secondary); color: white; border: none; padding: 16px; border-radius: 50px; width: 100%; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .user-badge { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-weight: 900; color: var(--primary); font-size: 14px; }
 
-        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 25px; padding: 25px; margin-bottom: 20px; }
-        .bet-card { position: relative; animation: slideUp 0.6s ease; }
-        .type-tag { position: absolute; top: -10px; right: 20px; background: var(--primary); color: black; padding: 6px 15px; border-radius: 20px; font-weight: 900; font-size: 11px; }
-        .code-display { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; margin: 10px 0; border: 1px dashed var(--primary); }
-        
-        /* MUSIC TOGGLE BUTTON */
-        .music-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px var(--secondary); z-index: 1000; transition: 0.3s; }
-        .music-btn.playing { background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+        /* ADMIN TERMINAL */
+        #admin-panel { display: none; border: 1px solid var(--secondary); margin-bottom: 30px; background: rgba(255, 0, 85, 0.05); box-shadow: 0 0 20px rgba(255, 0, 85, 0.1); }
+        .input-box { background: rgba(0,0,0,0.6); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; outline: none; transition: 0.3s; font-family: 'Poppins'; }
+        .input-box:focus { border-color: var(--primary); }
+        .btn-send { background: linear-gradient(45deg, var(--secondary), #cc0044); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; margin-top: 10px; font-size: 16px; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* SIGNAL CARDS */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .bet-card { position: relative; animation: slideUp 0.5s ease; border-left: 4px solid var(--primary); }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .type-tag { font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: white; }
+        .time-tag { font-size: 11px; opacity: 0.6; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 10px currentColor; }
+        .status-active { color: var(--neon-green); }
+        .status-expired { color: var(--neon-red); }
+
+        .bookie-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .bookie-box { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid var(--border); }
+        .bookie-title { font-size: 12px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; }
+        .code-txt { font-family: 'Outfit'; font-size: 22px; font-weight: 900; margin-bottom: 15px; letter-spacing: 2px; }
+        
+        .action-btns { display: flex; flex-direction: column; gap: 8px; }
+        .btn-action { padding: 10px; border-radius: 8px; border: none; font-weight: 900; font-size: 12px; cursor: pointer; transition: 0.3s; text-decoration: none; color: white; }
+        .btn-copy { background: rgba(255,255,255,0.1); border: 1px solid var(--border); }
+        .btn-copy:hover { background: rgba(255,255,255,0.2); }
+        .btn-open-pawa { background: #000000; border: 1px solid var(--neon-green); color: var(--neon-green); }
+        .btn-open-sporty { background: #e61919; color: white; }
+
+        /* MUSIC BUTTON */
+        .music-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px var(--primary); z-index: 1000; color: black; font-size: 20px; transition: 0.3s; }
+        .music-btn.playing { background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); animation: pulse 2s infinite; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div id="space"></div>
-    <audio id="aviatorSong" loop preload="auto">
-        <source src="https://www.soundboard.com/handler/Downloadaudio.ashx?id=336214" type="audio/mpeg">
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3" type="audio/mpeg">
     </audio>
 
     <div id="ageModal">
         <div class="modal-card">
-            <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 50px; margin-bottom: 20px;"></i>
-            <h2 style="font-family: 'Outfit';">AGE VERIFICATION</h2>
-            <p style="font-size: 14px; opacity: 0.7; margin-bottom: 30px;">Are you 18 years or older to access Lupin Bet signals?</p>
-            <div style="display: flex; gap: 15px;">
-                <button class="input-box" style="background: var(--primary); color: black; font-weight: 900; margin:0;" onclick="verifyAge(true)">YES, ENTER</button>
-                <button class="input-box" style="background: transparent; border: 1px solid var(--secondary); margin:0;" onclick="window.location.href='index.html'">NO, EXIT</button>
-            </div>
+            <i class="fas fa-exclamation-triangle" style="color: var(--primary); font-size: 50px; margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Outfit'; margin-bottom: 10px;">AGE RESTRICTION</h2>
+            <p style="font-size: 13px; opacity: 0.7; margin-bottom: 30px;">This platform contains high-stakes betting signals. You must be 18+ to enter.</p>
+            <button class="input-box" style="background: var(--primary); color: black; font-weight: 900; font-size: 16px; border:none;" onclick="verifyAge()">YES, I'M 18+</button>
+            <button class="input-box" style="background: transparent; border: 1px solid var(--border); font-size: 14px; margin-top:10px;" onclick="window.location.href='index.html'">EXIT</button>
         </div>
     </div>
 
     <header>
         <div class="logo">LUPIN BET</div>
-        <div id="userInfo" style="font-weight: 900; color: var(--secondary);">GUEST</div>
+        <div class="user-badge"><i class="fas fa-user-ninja"></i> <span id="userInfo">GUEST</span></div>
     </header>
 
-    <div class="container" style="max-width: 500px; margin: 25px auto; padding: 0 15px;">
+    <div class="container" style="max-width: 600px; margin: 30px auto; padding: 0 15px;">
         
         <div id="admin-panel" class="glass-panel">
-            <h4 style="color: var(--secondary); margin-bottom: 15px;"><i class="fas fa-user-secret"></i> SHADOW PANEL</h4>
-            <input type="text" id="pawaCode" placeholder="Betpawa Code" class="input-box">
-            <input type="text" id="sportyCode" placeholder="SportyBet Code" class="input-box">
-            <input type="number" id="stakeAmount" placeholder="Stake Amount" class="input-box">
-            <button class="btn-send" onclick="sendSignal()">BROADCAST NOW</button>
+            <h4 style="color: var(--secondary); margin-bottom: 15px; font-family: 'Outfit';"><i class="fas fa-terminal"></i> SHADOW COMMAND CENTER</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <select id="matchType" class="input-box">
+                    <option value="FIXED MATCH 💎">FIXED MATCH 💎</option>
+                    <option value="RANDOM MATCH 🎲">RANDOM MATCH 🎲</option>
+                </select>
+                <select id="matchStatus" class="input-box">
+                    <option value="ACTIVE">🟢 ACTIVE (HEWANI)</option>
+                    <option value="EXPIRED">🔴 EXPIRED (IMEISHA)</option>
+                </select>
+            </div>
+            
+            <input type="text" id="pawaCode" placeholder="Betpawa Code (e.g. 5A3B12)" class="input-box">
+            <input type="text" id="sportyCode" placeholder="SportyBet Code (e.g. BC4E5F)" class="input-box">
+            
+            <button class="btn-send" onclick="sendSignal()"><i class="fas fa-paper-plane"></i> BROADCAST SIGNAL</button>
         </div>
 
-        <h5 style="opacity: 0.4; margin-bottom: 15px; font-size: 11px;"><i class="fas fa-wifi"></i> ENCRYPTED SIGNAL FEED</h5>
+        <h5 style="opacity: 0.5; margin-bottom: 15px; font-size: 12px; letter-spacing: 2px;"><i class="fas fa-satellite-dish"></i> LIVE SIGNAL FEED</h5>
         
         <div id="bet-feed">
-            <div class="loader" style="text-align: center; padding: 50px; opacity: 0.3;">
-                <i class="fas fa-circle-notch fa-spin" style="font-size: 30px; margin-bottom: 15px;"></i><br>
-                CONNECTING TO NEURAL LINK...
+            <div class="loader" style="text-align: center; padding: 60px; opacity: 0.3;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px; color: var(--primary);"></i><br>
+                <span style="letter-spacing: 2px; font-size: 12px;">CONNECTING TO SERVER...</span>
             </div>
         </div>
     </div>
@@ -96,69 +135,76 @@
     </div>
 
     <script>
-        const APP_ID = "21151475704618df"; 
+        // CONFIG - NEW CREDENTIALS
+        const APP_ID = "1676976749d097e50"; 
         const REGION = "us"; 
-        const AUTH_KEY = "6f0490333289052601990c884699564619969"; 
-        const GROUP_ID = "lupin_bet_signals"; 
-        const currentUser = localStorage.getItem('systemUser') || "Guest";
-
-        // INIT STARS
-        const space = document.getElementById('space');
-        for(let i=0; i<60; i++) {
-            let s = document.createElement('div'); s.className='star';
-            s.style.width='2px'; s.style.height='2px';
-            s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
-            space.appendChild(s);
-        }
+        const AUTH_KEY = "518ddbb8a0ff8c4480eb7df1694a6ab8570daf40"; 
+        const GROUP_ID = "bet_oneway"; 
+        const SHADOW_UID = "bet_123"; // Hii ndio UID ya admin
+        
+        // Chukua jina alilologin nalo (Kama hakuna, mpe 'guest_user')
+        const currentUser = localStorage.getItem('systemUser') || "guest_" + Math.floor(Math.random()*1000);
 
         function verifyAge() {
             document.getElementById('ageModal').style.display = 'none';
-            document.getElementById('userInfo').innerText = currentUser.toUpperCase();
             
-            // START MUSIC IMMEDIATELY
+            // Set jina kule juu. Kama ni bet_123, andika SHADOW. Vinginevyo andika jina lake.
+            let displayName = (currentUser === SHADOW_UID) ? "SHADOW" : currentUser.toUpperCase();
+            document.getElementById('userInfo').innerText = displayName;
+            
+            // Anzisha wimbo
             toggleMusic(true);
 
-            if(currentUser.toUpperCase() === "SHADOW") {
+            // Fungua Admin Panel kama ni SHADOW pekee
+            if(currentUser === SHADOW_UID) {
                 document.getElementById('admin-panel').style.display = 'block';
             }
+            
             initCometChat();
         }
 
         function initCometChat() {
             let appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
             CometChat.init(APP_ID, appSetting).then(() => {
-                CometChat.login(currentUser, AUTH_KEY).then(user => {
-                    console.log("Login Success");
-                    
-                    // AUTOMATICALLY JOIN GROUP (SILENTLY)
-                    CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(
-                        res => {
-                            console.log("Joined Secret Group");
-                            fetchHistory(); // Pakua signals za zamani
-                        },
-                        err => { fetchHistory(); } // Tayari ni member
-                    );
+                
+                // Tunatengeneza user on-the-fly kama hayupo ili asikwame (Kama sio Shadow)
+                let user = new CometChat.User(currentUser);
+                user.setName(currentUser);
+                CometChat.createUser(user, AUTH_KEY).then(
+                    user => { proceedLogin(); },
+                    error => { proceedLogin(); } // User already exists, proceed to login
+                );
 
-                    // LISTEN FOR LIVE SIGNALS
-                    CometChat.addMessageListener("LUPIN_LISTENER", new CometChat.MessageListener({
-                        onCustomMessageReceived: msg => {
-                            if(msg.type === "bet_signal") displaySignal(msg.data.customData);
-                        }
-                    }));
-                });
+            });
+        }
+
+        function proceedLogin() {
+            CometChat.login(currentUser, AUTH_KEY).then(user => {
+                console.log("System Online");
+                
+                // AUTO JOIN GROUP (KIMYAKIMYA)
+                CometChat.joinGroup(GROUP_ID, CometChat.GROUP_TYPE.PUBLIC, "").then(
+                    success => { fetchHistory(); },
+                    error => { fetchHistory(); } // Tayari yupo
+                );
+
+                // SIKILIZA MESSAGES MPYA LIVE
+                CometChat.addMessageListener("SHADOW_LISTENER", new CometChat.MessageListener({
+                    onCustomMessageReceived: msg => {
+                        if(msg.type === "bet_signal") displaySignal(msg.data.customData);
+                    }
+                }));
             });
         }
 
         function fetchHistory() {
-            let limit = 20;
-            let messagesRequest = new CometChat.MessagesRequestBuilder()
-                .setGUID(GROUP_ID)
-                .setLimit(limit)
-                .setCategories(["custom"])
-                .build();
-
+            let limit = 30;
+            let messagesRequest = new CometChat.MessagesRequestBuilder().setGUID(GROUP_ID).setLimit(limit).setCategories(["custom"]).build();
             messagesRequest.fetchPrevious().then(messages => {
-                document.getElementById('bet-feed').innerHTML = '';
+                document.getElementById('bet-feed').innerHTML = ''; // Safisha loader
+                if(messages.length === 0) {
+                    document.getElementById('bet-feed').innerHTML = '<div style="text-align:center; opacity:0.3; padding:30px;">NO SIGNALS YET</div>';
+                }
                 messages.forEach(msg => {
                     if(msg.type === "bet_signal") displaySignal(msg.data.customData);
                 });
@@ -167,57 +213,90 @@
 
         function sendSignal() {
             const data = {
-                pawa: document.getElementById('pawaCode').value || "TBA",
-                sporty: document.getElementById('sportyCode').value || "TBA",
-                stake: document.getElementById('stakeAmount').value || "0",
+                type: document.getElementById('matchType').value,
+                status: document.getElementById('matchStatus').value,
+                pawa: document.getElementById('pawaCode').value || "N/A",
+                sporty: document.getElementById('sportyCode').value || "N/A",
                 time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
             let customMessage = new CometChat.CustomMessage(GROUP_ID, CometChat.RECEIVER_TYPE.GROUP, "bet_signal", data);
+            
             CometChat.sendCustomMessage(customMessage).then(msg => {
-                alert("SIGNAL BROADCASTED!");
+                // Clear inputs baada ya kutuma
+                document.getElementById('pawaCode').value = '';
+                document.getElementById('sportyCode').value = '';
                 displaySignal(data);
             });
         }
 
         function displaySignal(data) {
             const feed = document.getElementById('bet-feed');
-            const pWin = (parseFloat(data.stake) * 3.45).toLocaleString();
-            const sWin = (parseFloat(data.stake) * 3.75).toLocaleString();
+            if(feed.querySelector('.loader') || feed.innerHTML.includes('NO SIGNALS')) feed.innerHTML = '';
+            
+            // Check Status Color
+            let statusHTML = '';
+            if(data.status === "ACTIVE") {
+                statusHTML = `<span class="status-dot status-active"></span> <span style="color:var(--neon-green); font-size:12px; font-weight:900;">ACTIVE</span>`;
+            } else {
+                statusHTML = `<span class="status-dot status-expired"></span> <span style="color:var(--neon-red); font-size:12px; font-weight:900;">EXPIRED</span>`;
+            }
 
             const card = `
                 <div class="glass-panel bet-card">
-                    <span class="type-tag">LIVE SIGNAL</span>
-                    <div style="font-size: 10px; opacity: 0.5; margin-bottom: 12px;">TIMESTAMP: ${data.time}</div>
-                    <div class="code-display" onclick="copyCode('${data.pawa}', this)">
-                        <small style="color:var(--primary)">BETPAWA CODE</small><br><strong>${data.pawa}</strong>
+                    <div class="header-row">
+                        <div>
+                            <div class="type-tag">${data.type}</div>
+                            <div class="time-tag">POSTED AT: ${data.time}</div>
+                        </div>
+                        <div>${statusHTML}</div>
                     </div>
-                    <div class="code-display" onclick="copyCode('${data.sporty}', this)">
-                        <small style="color:var(--secondary)">SPORTYBET CODE</small><br><strong>${data.sporty}</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-weight:900; font-size:12px; margin-top:10px;">
-                        <span style="color: var(--neon-green)">PAWA: TZS ${pWin}</span>
-                        <span style="color: #f1c40f">SPORTY: TZS ${sWin}</span>
+                    
+                    <div class="bookie-section">
+                        <div class="bookie-box">
+                            <div class="bookie-title" style="color:var(--primary);">BETPAWA</div>
+                            <div class="code-txt">${data.pawa}</div>
+                            <div class="action-btns">
+                                <button class="btn-action btn-copy" onclick="copyText('${data.pawa}', this)">COPY CODE</button>
+                                <a href="https://www.betpawa.co.tz" target="_blank" class="btn-action btn-open-pawa">OPEN SITE</a>
+                            </div>
+                        </div>
+
+                        <div class="bookie-box">
+                            <div class="bookie-title" style="color:#e61919;">SPORTYBET</div>
+                            <div class="code-txt">${data.sporty}</div>
+                            <div class="action-btns">
+                                <button class="btn-action btn-copy" onclick="copyText('${data.sporty}', this)">COPY CODE</button>
+                                <a href="https://www.sportybet.com/tz" target="_blank" class="btn-action btn-open-sporty">OPEN SITE</a>
+                            </div>
+                        </div>
                     </div>
                 </div>`;
             feed.insertAdjacentHTML('afterbegin', card);
         }
 
-        function copyCode(text, el) {
+        function copyText(text, btnElement) {
             navigator.clipboard.writeText(text);
-            el.style.borderColor = "var(--neon-green)";
-            setTimeout(() => el.style.borderColor = "var(--primary)", 1000);
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "✓ COPIED!";
+            btnElement.style.background = "var(--neon-green)";
+            btnElement.style.color = "black";
+            
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.style.background = "rgba(255,255,255,0.1)";
+                btnElement.style.color = "white";
+            }, 1500);
         }
 
-        // MUSIC CONTROL SYSTEM
         let playing = false;
         function toggleMusic(forcePlay = false) {
-            const song = document.getElementById('aviatorSong');
+            const song = document.getElementById('bgMusic');
             const btn = document.getElementById('musicBtn');
             const icon = document.getElementById('musicIcon');
 
             if(!playing || forcePlay) {
-                song.play();
+                song.play().catch(e => console.log("Gusa screen kwanza kuruhusu sauti"));
                 btn.classList.add('playing');
                 icon.className = "fas fa-volume-up";
                 playing = true;
