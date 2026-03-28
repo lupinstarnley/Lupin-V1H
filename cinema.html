@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUPIN CINEMA | NEURAL STREAM V2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050510;
+            --primary: #00e5ff;
+            --secondary: #b026ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f0f0f0;
+            --glow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
+
+        /* ================= DEEP SPACE BACKGROUND ================= */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at center, #130b29 0%, #050510 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        header {
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 16, 0.7); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .user-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--secondary); padding: 8px 20px; 
+            border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 700; color: white;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 0 10px rgba(176, 38, 255, 0.3);
+        }
+
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* ================= SEARCH BOX ================= */
+        .search-container {
+            background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+            border-radius: 50px; padding: 10px 20px; margin-bottom: 40px; display: flex; gap: 10px; box-shadow: var(--glow);
+        }
+        .search-input { flex: 1; background: transparent; border: none; color: white; outline: none; padding: 10px; font-size: 16px; }
+        .search-btn { background: var(--primary); color: #000; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+
+        /* ================= MOVIE GRID ================= */
+        #movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
+        .movie-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px;
+            overflow: hidden; transition: 0.4s; backdrop-filter: blur(10px);
+        }
+        .movie-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: var(--glow); }
+        .movie-poster { width: 100%; height: 260px; object-fit: cover; }
+        .movie-info { padding: 15px; text-align: center; }
+        .movie-title { font-size: 13px; font-weight: 600; margin-bottom: 5px; height: 38px; overflow: hidden; }
+
+        /* ================= CIRCULAR BUTTONS ================= */
+        .btn-group { display: flex; justify-content: center; gap: 15px; }
+        .circle-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .play-btn { background: var(--primary); color: #000; box-shadow: 0 0 10px var(--primary); }
+        .down-btn { background: #25D366; color: white; }
+
+        /* ================= PLAYER OVERLAY ================= */
+        #player-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .player-content { width: 95%; max-width: 1000px; background: #000; border: 2px solid var(--primary); border-radius: 25px; position: relative; }
+        iframe { width: 100%; height: 550px; border-radius: 23px; border: none; }
+        .close-player { position: absolute; top: -40px; right: 0; color: white; font-size: 30px; cursor: pointer; }
+
+        .loader { grid-column: 1/-1; text-align: center; padding: 50px; color: var(--primary); font-family: 'Outfit'; }
+    </style>
+</head>
+<body>
+
+    <div id="universe-bg"></div>
+
+    <div id="player-overlay">
+        <div class="player-content">
+            <span class="close-player" onclick="closePlayer()">&times; Close Player</span>
+            <div id="video-container"></div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">LUPIN CINEMA</div>
+        <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="displayUser">LUPIN</span></div>
+    </header>
+
+    <div class="main-container">
+        <div class="search-container">
+            <input type="text" id="movieQuery" class="search-input" placeholder="Search the galaxy for movies...">
+            <button class="search-btn" onclick="searchMovies()"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div id="movie-grid">
+            <div class="loader">SYNCHRONIZING WITH MULTIVERSE...</div>
+        </div>
+    </div>
+
+    <script>
+        // Universe Engine
+        for (let i = 0; i < 100; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 2 + 'px'; star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+            document.getElementById('universe-bg').appendChild(star);
+        }
+
+        const currentUser = localStorage.getItem('systemUser') || "Lupin Starnley";
+        document.getElementById('displayUser').innerText = currentUser.toUpperCase();
+
+        // TMDB API - Hii ni BURE MILELE na haifi
+        const TMDB_KEY = '8d9761358a30d67683ca08848529340e'; 
+
+        async function searchMovies(query = '') {
+            const input = document.getElementById('movieQuery').value.trim();
+            const grid = document.getElementById('movie-grid');
+            grid.innerHTML = '<div class="loader"><i class="fas fa-satellite fa-spin"></i> FETCHING DATA...</div>';
+
+            // Kama hakuna search, leta Trending Movies
+            let url = query || input 
+                ? `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query || input)}`
+                : `https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_KEY}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                grid.innerHTML = '';
+
+                data.results.forEach(m => {
+                    const poster = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+                    grid.innerHTML += `
+                        <div class="movie-card">
+                            <img src="${poster}" class="movie-poster">
+                            <div class="movie-info">
+                                <div class="movie-title">${m.title}</div>
+                                <div class="btn-group">
+                                    <button class="circle-btn play-btn" onclick="openPlayer('${m.id}')"><i class="fas fa-play"></i></button>
+                                    <button class="circle-btn down-btn" onclick="window.open('https://www.google.com/search?q=download+${encodeURIComponent(m.title)}', '_blank')"><i class="fas fa-download"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            } catch (e) {
+                grid.innerHTML = '<div class="loader">Neural Link Error. Check connection.</div>';
+            }
+        }
+
+        function openPlayer(id) {
+            const overlay = document.getElementById('player-overlay');
+            const container = document.getElementById('video-container');
+            overlay.style.display = 'flex';
+            // Tunatumia vidsrc.to - hii ni embed ya bure ya kucheza movies
+            container.innerHTML = `<iframe src="https://vidsrc.to/embed/movie/${id}" allowfullscreen></iframe>`;
+        }
+
+        function closePlayer() {
+            document.getElementById('player-overlay').style.display = 'none';
+            document.getElementById('video-container').innerHTML = '';
+        }
+
+        window.onload = () => searchMovies();
+        document.getElementById("movieQuery").addEventListener("keypress", (e) => { if(e.key === "Enter") searchMovies(); });
+    </script>
+</body>
+</html>
