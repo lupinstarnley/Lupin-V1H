@@ -393,43 +393,44 @@
         }
         if(currentUser) setTimeout(typeWriterBio, 1000);
 
-        // ================= ⚽ DLS MULTIPLAYER LOGIC (THE ARCHITECT HACK) =================
+                // ================= ⚽ DLS MULTIPLAYER LOGIC (THE ARCHITECT HACK) =================
         function startDLSEliteBattle() {
-            // 1. Generate Unique Room Code
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             let roomCode = '';
             for (let i = 0; i < 6; i++) { roomCode += chars.charAt(Math.floor(Math.random() * chars.length)); }
 
             let user = localStorage.getItem('systemUser') || 'LUPIN';
             
-            // 2. Construct the Masked Link
-            const currentUrl = window.location.href.split('?')[0];
-            const battleLink = `${currentUrl}?join=${roomCode}&by=${user}`;
+            // TUNAONDOA kila kitu baada ya alama ya '#' ili link iwe safi
+            const cleanUrl = window.location.origin + window.location.pathname;
+            const battleLink = `${cleanUrl}?join=${roomCode}&by=${user}`;
             
-            // 3. Share Message (Designed to show professional Preview)
             const textMessage = `⚽ *DLS ELITE BATTLE INVITE* ⚽\n\nChallenge from: *${user.toUpperCase()}*\n\nYour access code is already embedded in the link below. Click to play:\n\n👉 ${battleLink}`;
             
             window.location.href = `whatsapp://send?text=${encodeURIComponent(textMessage)}`;
         }
 
-        // AUTO-JOIN LOGIC FOR OPPONENT
+        // AUTO-JOIN & REDIRECT LOGIC
         const urlParams = new URLSearchParams(window.location.search);
         const joinCode = urlParams.get('join');
         const challenger = urlParams.get('by');
 
         if (joinCode) {
-            // Delay a bit for the page to load
-            setTimeout(() => {
+            // 1. Copy to clipboard kwanza
+            navigator.clipboard.writeText(joinCode).then(() => {
                 const aiResponse = document.getElementById('ai-response');
-                aiResponse.innerHTML = `<i class='fas fa-gamepad' style='color: #f1c40f;'></i> <b>BATTLE INCOMING!</b><br>Opponent: <b>${challenger.toUpperCase()}</b><br>Room Code: <b>${joinCode}</b><br><br><span style='color: var(--primary);'>Code copied! Launching DLS...</span>`;
+                aiResponse.innerHTML = `<i class='fas fa-gamepad' style='color: #f1c40f;'></i> <b>BATTLE STARTING!</b><br>Room Code [${joinCode}] copied!`;
                 
-                // Copy to clipboard
-                navigator.clipboard.writeText(joinCode).then(() => {
-                    alert(`BATTLE READY!\n\n${challenger.toUpperCase()} has invited you. The code [${joinCode}] has been copied to your clipboard.\n\nOpening DLS... Paste the code in Multiplayer!`);
-                    // Launch DLS
-                    window.location.href = "dls24://";
-                });
-            }, 1500);
+                // 2. Jaribu kufungua DLS
+                window.location.href = "dls24://"; 
+
+                // 3. Kama baada ya sekunde 3 game halijafunguka, nenda Play Store
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        window.location.href = "https://play.google.com/store/apps/details?id=com.firsttouchgames.dls7";
+                    }
+                }, 3000);
+            });
         }
 
     </script>
