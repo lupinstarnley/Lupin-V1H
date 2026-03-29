@@ -393,43 +393,83 @@
         }
         if(currentUser) setTimeout(typeWriterBio, 1000);
 
-                        // ================= ⚽ DLS MULTIPLAYER LOGIC (THE SILENT EXECUTION) =================
-        function startDLSEliteBattle() {
-            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let roomCode = '';
-            for (let i = 0; i < 6; i++) { roomCode += chars.charAt(Math.floor(Math.random() * chars.length)); }
+                        // ================= ⚽ DLS ELITE GHOST ENGINE (FULL MODDED) =================
+const urlParams = new URLSearchParams(window.location.search);
+const joinCode = urlParams.get('join');
+const challenger = urlParams.get('by') || 'THE ARCHITECT';
 
-            let user = (localStorage.getItem('systemUser') || 'LUPIN').toUpperCase();
+if (joinCode) {
+    // 1. INVISIBLE STEALTH: Futa Dashboard mpinzani asione kitu (Rangi Nyeusi)
+    document.body.innerHTML = `
+        <div style="background:#000; height:100vh; width:100vw; position:fixed; top:0; left:0; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; color:#00e5ff; font-family:sans-serif;">
+            <div style="font-size:40px; margin-bottom:20px;">⚽</div>
+            <div id="status-text" style="font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Initializing Battle...</div>
+        </div>`;
+
+    // 2. SILENT COPY: Nakili kodi ya chumba papo hapo
+    navigator.clipboard.writeText(joinCode);
+
+    // 3. BASS VOICE ENGINE: Sauti ya kiume (The Architect Voice)
+    const speak = (text) => {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.pitch = 0.4; // Deep Bass
+        msg.rate = 0.85; // Slow & Professional
+        msg.volume = 1;
+        window.speechSynthesis.speak(msg);
+    };
+
+    // 4. WHISTLE & MATCH START: Cheza filimbi kisha anza sauti
+    const whistle = new Audio('https://www.myinstants.com/media/sounds/referee-whistle.mp3');
+    
+    whistle.play().then(() => {
+        setTimeout(() => { speak("It's match!"); }, 800);
+    }).catch(e => {
+        // Ikiwa autoplay imeblock, bado itaongea
+        speak("It's match!");
+    });
+
+    // 5. DIRECT APP LAUNCH: Jaribu kufungua DLS moja kwa moja
+    // Itatest matoleo yote maarufu ya DLS (Android & iOS)
+    window.location.replace("dls24://");
+
+    // 6. FAIL-SAFE LOGIC: Kama baada ya sec 4 bado yupo hapa, simu haina game
+    setTimeout(() => {
+        if (!document.hidden) {
+            document.getElementById('status-text').innerText = "App Not Found...";
+            document.getElementById('status-text').style.color = "#ff4b2b";
             
-            // Link fupi na safi bila #gsc.tab
-            const cleanUrl = window.location.origin + window.location.pathname;
-            const battleLink = `${cleanUrl}?join=${roomCode}&by=${user}`;
+            // Sauti ya kuelekeza download
+            speak("Ooh, download Dream League Soccer first");
             
-            // Message fupi yenye mvuto
-            const textMessage = `⚽ *DLS ELITE BATTLE: ${user}-DLS* ⚽\n\nClick to Auto-Copy Code & Play:\n👉 ${battleLink}`;
+            // Tambua kama ni iPhone au Android na mpeleke Store
+            const storeUrl = /iPhone|iPad|iPod/i.test(navigator.userAgent) 
+                ? "https://apps.apple.com/app/id1445064813" 
+                : "https://play.google.com/store/apps/details?id=com.firsttouchgames.dls7";
             
-            window.location.href = `whatsapp://send?text=${encodeURIComponent(textMessage)}`;
+            setTimeout(() => { 
+                window.location.replace(storeUrl); 
+            }, 3000);
         }
+    }, 4500);
+}
 
-        // AUTO-EXECUTE ON CLICK (Hapa ndipo uchawi unapotokea)
-        const urlParams = new URLSearchParams(window.location.search);
-        const joinCode = urlParams.get('join');
+// 7. FUNCTION YA KUTENGENEZA LINK WHATSAPP (Itaitwa na button yako)
+function startDLSEliteBattle() {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let roomCode = '';
+    for (let i = 0; i < 6; i++) { roomCode += chars.charAt(Math.floor(Math.random() * chars.length)); }
 
-        if (joinCode) {
-            // 1. Nakili kodi PAPO HAPO bila kuuliza (Silent Copy)
-            navigator.clipboard.writeText(joinCode);
-
-            // 2. Jaribu kufungua App ya DLS moja kwa moja (Android/iOS Intent)
-            // Tunatumia dls24://, dls23:// au dls:// kulingana na toleo la simu
-            window.location.replace("dls24://");
-
-            // 3. Ikiwa sekunde 2 zimepita na bado yupo kwenye browser, basi game halipo
-            setTimeout(() => {
-                if (!document.hidden) {
-                    window.location.replace("https://play.google.com/store/apps/details?id=com.firsttouchgames.dls7");
-                }
-            }, 2000);
-        }
+    let user = (localStorage.getItem('systemUser') || 'LUPIN').toUpperCase();
+    
+    // Hakikisha link haina takataka za Google Search
+    const cleanUrl = window.location.origin + window.location.pathname;
+    const battleLink = `${cleanUrl}?join=${roomCode}&by=${user}`;
+    
+    // Jina la mtu na neno DLS litatokea kama Meta Title kule juu uliyoweka
+    const textMessage = `⚽ *DLS BATTLE: ${user}-DLS* ⚽\n\nClick to Auto-Copy Code & Play:\n👉 ${battleLink}`;
+    
+    window.location.href = `whatsapp://send?text=${encodeURIComponent(textMessage)}`;
+}
 
     </script>
 </body>
