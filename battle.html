@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lupin Penati Battle ⚽</title>
+    <style>
+        body { background: #0a0a0a; color: white; font-family: 'Arial Black', sans-serif; text-align: center; margin: 0; overflow: hidden; }
+        
+        /* 1. Mfumo wa Ku-rotate Simu (Orientation Detect) */
+        #rotate-warning { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
+        .icon { font-size: 50px; margin-bottom: 20px; }
+        
+        @media screen and (orientation: landscape) { #main-content { display: block; } #rotate-warning { display: none; } }
+        @media screen and (orientation: portrait) { #main-content { display: none; } #rotate-warning { display: flex; } }
+
+        /* 2. Uwanja na Graphics */
+        #stadium { height: 100vh; background: url('https://w0.peakpx.com/wallpaper/584/758/HD-wallpaper-soccer-field-stadium-and-lights-thumbnail.jpg') no-repeat center center; background-size: cover; position: relative; }
+        
+        /* 3. Score Board */
+        .score-board { display: flex; justify-content: space-around; font-size: 2.5em; padding: 15px; background: rgba(0,0,0,0.7); border-bottom: 3px solid #f1c40f; text-shadow: 2px 2px black; }
+        
+        /* 4. Controls (The Draw Areas) */
+        .controls { position: absolute; bottom: 30px; left: 10%; width: 80%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .btn { background: rgba(255,0,0,0.6); color: white; border: 4px solid white; border-radius: 10px; font-size: 20px; padding: 20px 0; cursor: pointer; text-shadow: 1px 1px black; }
+        .btn:active { transform: scale(0.9); background: white; color: black; }
+        .btn-waiting { background: #333 !important; border: 4px solid #555 !important; pointer-events: none; }
+
+        #status-box { position: absolute; top: 120px; width: 100%; text-align: center; color: yellow; font-size: 1.5em; text-shadow: 2px 2px black; }
+    </style>
+</head>
+<body>
+
+    <div id="rotate-warning">
+        <div class="icon">🔄</div>
+        <h2>GEUZA SIMU YAKO ILI CHEZA</h2>
+        <p>Tafadhali weka simu yako upande wa 'Landscape' (Lala).</p>
+    </div>
+
+    <div id="main-content">
+        <div id="setup">
+            <h1 style="color: #f1c40f; font-size: 4em; margin-top: 10vh;">PENATI BATTLE⚔️</h1>
+            <button onclick="createRoom()" class="btn" style="background: #27ae60; width: 50%; padding: 20px; font-size: 25px;">SHARE BATTLE & INVITE</button>
+        </div>
+
+        <div id="game" style="display:none;">
+            <div id="stadium">
+                <div class="score-board">
+                    <div>ME: <span id="my-score">0</span></div>
+                    <div>OPP: <span id="opp-score">0</span></div>
+                </div>
+
+                <div id="status-box">Subiri mpinzani aingie...</div>
+
+                <div class="controls" id="action-btns">
+                    <button class="btn" onclick="playTurn('L')">KUSHOTO</button>
+                    <button class="btn" onclick="playTurn('C')">KATI</button>
+                    <button class="btn" onclick="playTurn('R')">KULIA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // 1. FIREBASE CONFIG (Zako Sahihi)
+        const firebaseConfig = {
+            apiKey: "WEKA_API_KEY_YAKO",
+            databaseURL: "https://lupin-universe-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let roomID = new URLSearchParams(window.location.search).get('room');
+        let role = ""; // 'p1' au 'p2'
+
+        // 2. CHEKI KAMA KUNA LINK
+        if (roomID) {
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            initGame();
+        }
+
+        // 3. SHARE LINK & OPEN WHATSAPP
+        function createRoom() {
+            let id = "Penati-" + Math.floor(Math.random() * 9999);
+            // Inatengeneza Link ya kipekee
+            let link = window.location.origin + window.location.pathname + "?room=" + id;
+            // Inafungua WhatsApp na message tayari kutumwa
+            window.location.href = "whatsapp://send?text=Lupin Street Penalty! ⚽ Nimecheza penati, njoo ubashiri nitapiga wapi tuone nani mjanja: " + link;
+        }
+
+        // 4. GAME INITIALIZATION
+        function initGame() {
+            db.ref('Penalty/' + roomID).once('value', snap => {
+                if (!snap.exists()) {
+                    role = "p1"; // Player 1
+                    db.ref('Penalty/' + roomID).set({ p1_score:0, p2_score:0, p1_move:"", p2_move:"" });
+                } else {
+                    role = "p2"; // Player 2
+                }
+                listenBattle();
+            });
+        }
+
+        // 5. PLAY TURN (Uchaguzi)
+        function playTurn(move) {
+            db.ref('Penalty/' + roomID).update({ [role + "_move"]: move });
+            document.getElementById('status-box').innerText = "Umeshachagua upande! Subiri mpinzani...";
+            document.getElementById('action-btns').style.pointerEvents = "none";
+            document.getElementById('action-btns').classList.add('btn-waiting');
+        }
+
+        // 6. LISTEN REAL-TIME DATA
+        function listenBattle() {
+            db.ref('Penalty/' + roomID).on('value', snap => {
+                let data = snap.val();
+                
+                // Update Scores
+                document.getElementById('my-score').innerText = (role === "p1") ? data.p1_score : data.p2_score;
+                document.getElementById('opp-score').innerText = (role === "p1") ? data.p2_score : data.p1_score;
+
+                // Cheki kama nyote mmeshachagua
+                if (data.p1_move && data.p2_move) {
+                    processResult(data);
+                }
+            });
+        }
+
+        // 7. CALC RESULT (The Psychology Logic)
+        function processResult(data) {
+            let resultMessage = "";
+            let winner = "";
+
+            // Hali ya Ushindi (P1 anapiga, P2 anadaka)
+            if (data.p1_move !== data.p2_move) {
+                // P1 anapata point (Mpira na Kipa upande tofauti)
+                resultMessage = "GOAL!!! 🔥 (Point kwa Player 1)";
+                winner = "p1";
+            } else {
+                // P2 anapata point (Mpira na Kipa upande mmoja)
+                resultMessage = "IMEDAKWA! 🧤 (Point kwa Player 2)";
+                winner = "p2";
+            }
+
+            alert(resultMessage);
+
+            // Update points kwenye Firebase (Irekodiwe Live)
+            let winnerScoreKey = (winner === "p1") ? 'p1_score' : 'p2_score';
+            let newScore = data[winnerScoreKey] + 1;
+            db.ref('Penalty/' + roomID).update({ [winnerScoreKey]: newScore });
+
+            // Reset kwa round inayofuata
+            db.ref('Penalty/' + roomID).update({ p1_move: "", p2_move: "" });
+            document.getElementById('action-btns').style.pointerEvents = "auto";
+            document.getElementById('action-btns').classList.remove('btn-waiting');
+            document.getElementById('status-box').innerText = "Chagua upande mwingine!";
+        }
+    </script>
+</body>
+                             </html>
+                      
